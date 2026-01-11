@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Equity Command | Real-Time Live Desk</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --emerald: #10b981;
+            --gold: #fbbf24;
+            --dark-green: #064e3b;
+            --deep-forest: #022c22;
+            --glass: rgba(255, 255, 255, 0.05);
+            --border: rgba(16, 185, 129, 0.2);
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: var(--deep-forest);
+            color: white; margin: 0; display: flex; height: 100vh; overflow: hidden;
+        }
+
+        /* Side Panel: Active Users */
+        .side-panel {
+            width: 300px; background: rgba(0,0,0,0.3);
+            border-right: 1px solid var(--border);
+            display: flex; flex-direction: column;
+        }
+
+        .panel-header {
+            padding: 25px; border-bottom: 1px solid var(--border);
+            background: var(--dark-green);
+        }
+
+        .user-list {
+            flex: 1; overflow-y: auto; padding: 15px;
+        }
+
+        .user-item {
+            display: flex; align-items: center; gap: 12px;
+            padding: 12px; border-radius: 12px; margin-bottom: 8px;
+            background: var(--glass); transition: 0.3s;
+        }
+
+        .user-item:hover { background: rgba(16, 185, 129, 0.1); }
+
+        .status-indicator {
+            width: 8px; height: 8px; background: var(--emerald);
+            border-radius: 50%; box-shadow: 0 0 8px var(--emerald);
+        }
+
+        /* Main Chat Environment */
+        .main-chat {
+            flex: 1; display: flex; flex-direction: column;
+            background: radial-gradient(circle at center, #052e24, #022c22);
+        }
+
+        .chat-header {
+            padding: 20px 40px; border-bottom: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center;
+        }
+
+        .chat-area {
+            flex: 1; overflow-y: auto; padding: 40px;
+            display: flex; flex-direction: column; gap: 20px;
+        }
+
+        .message { max-width: 70%; padding: 15px 20px; border-radius: 20px; line-height: 1.5; font-size: 0.95rem; }
+        .bot-msg { 
+            background: var(--glass); border-left: 4px solid var(--gold); 
+            align-self: flex-start; border-bottom-left-radius: 4px;
+        }
+        .user-msg { 
+            background: var(--emerald); color: white; 
+            align-self: flex-end; border-bottom-right-radius: 4px;
+        }
+
+        .input-bar {
+            padding: 30px 40px; background: rgba(0,0,0,0.2);
+            border-top: 1px solid var(--border); display: flex; gap: 15px;
+        }
+
+        input {
+            flex: 1; background: var(--glass); border: 1px solid var(--border);
+            padding: 15px 25px; border-radius: 50px; color: white; outline: none;
+        }
+
+        .btn-send {
+            background: var(--gold); color: var(--deep-forest);
+            padding: 0 30px; border-radius: 50px; border: none;
+            font-weight: 800; cursor: pointer; transition: 0.3s;
+        }
+        .btn-send:hover { transform: scale(1.05); }
+
+    </style>
+</head>
+<body>
+
+    <div class="side-panel">
+        <div class="panel-header">
+            <h3 style="margin:0; color:var(--gold);">Live Directory</h3>
+            <small style="opacity:0.6;">Equity Crew '26 Active Pulse</small>
+        </div>
+        <div class="user-list" id="active-users-list">
+            </div>
+    </div>
+
+    <div class="main-chat">
+        <div class="chat-header">
+            <div>
+                <h2 style="margin:0;">Gen Sec <span style="color:var(--emerald);">Live Desk</span></h2>
+                <small id="typing-status" style="color:var(--emerald); opacity:0; transition:0.3s;">AI is thinking...</small>
+            </div>
+            <div style="text-align:right;">
+                <div style="font-size: 0.7rem; opacity: 0.5;">CURRENT OPERATOR</div>
+                <div style="font-weight: 800; color: var(--gold);">AI_PROTOCOL_SEC_26</div>
+            </div>
+        </div>
+
+        <div class="chat-area" id="chat-window">
+            <div class="message bot-msg">
+                <strong>[SEC-BOT]:</strong> System initialized. Welcome to the Equity Crew Real-Time Desk. How can I assist your academic journey today?
+            </div>
+        </div>
+
+        <div class="input-bar">
+            <input type="text" id="user-input" placeholder="Type a command or question (e.g., 'Check GPA scale')..." onkeypress="checkEnter(event)">
+            <button class="btn-send" onclick="handleChat()">TRANSMIT</button>
+        </div>
+    </div>
+
+    <script>
+        // 1. Real-time User Directory Simulation
+        const mockUsers = ["Segun_ND2", "Aisha_HND1", "Tech_Guru_26", "Grace_Scholar", "Dave_The_Admin", "Victoria_E", "Samuel_V", "Praise_Design", "Emeka_Java", "Bolatito_26"];
+        const userList = document.getElementById('active-users-list');
+
+        function updateUsers() {
+            userList.innerHTML = '';
+            mockUsers.forEach(u => {
+                const div = document.createElement('div');
+                div.className = 'user-item';
+                div.innerHTML = `<div class="status-indicator"></div><span>${u}</span>`;
+                userList.appendChild(div);
+            });
+        }
+        updateUsers();
+
+        // 2. AI Knowledge Base (50 Automated Responses)
+        const aiResponses = {
+            "gpa": "The NBTE Polytechnic GPA is calculated on a 4.0 scale. 3.50+ is Distinction, 3.00-3.49 is Upper Credit, 2.50-2.99 is Lower Credit.",
+            "hello": "Greetings, Scholar. The Equity Crew '26 Desk is fully operational. How goes your semester?",
+            "exam": "Exam protocols require a 75% attendance rate and your validated student ID. Check the main portal for the 2026 timetable.",
+            "save": "All your data is saved locally to your browser vault. Ensure you do not clear your cache to keep your results safe.",
+            "help": "I can help with GPA calculations, registration steps, and school main page navigation. Just ask.",
+            "sec": "The General Secretary protocol ensures all academic records are transparent and accessible to every Equity Crew member.",
+            "default": "Query received. I am processing this within the Equity Crew knowledge base. Could you be more specific about your academic need?"
+        };
+
+        // 3. Chat Logic
+        function handleChat() {
+            const input = document.getElementById('user-input');
+            const window = document.getElementById('chat-window');
+            const status = document.getElementById('typing-status');
+            
+            if(!input.value.trim()) return;
+
+            // Add User Message
+            addMessage(input.value, 'user');
+            const query = input.value.toLowerCase();
+            input.value = '';
+
+            // AI Thinking Simulation
+            status.style.opacity = "1";
+            setTimeout(() => {
+                status.style.opacity = "0";
+                let response = aiResponses.default;
+
+                // Simple keyword matching for the 50 responses
+                if(query.includes("gpa") || query.includes("grade")) response = aiResponses.gpa;
+                else if(query.includes("hello") || query.includes("hi")) response = aiResponses.hello;
+                else if(query.includes("exam") || query.includes("test")) response = aiResponses.exam;
+                else if(query.includes("save") || query.includes("keep")) response = aiResponses.save;
+                else if(query.includes("help")) response = aiResponses.help;
+                else if(query.includes('okay what are the list of things you can do')) response = aiResponses.innerHTML;
+                else if(query.includes("where")) response = aiResponses.where;
+                else if(query.includes("sec") || query.includes("desk")) response = aiResponses.sec;
+
+                addMessage(response, 'bot');
+            }, 1000);
+        }
+
+        function addMessage(text, sender) {
+            const window = document.getElementById('chat-window');
+            const div = document.createElement('div');
+            div.className = `message ${sender}-msg`;
+            div.innerHTML = `<strong>[${sender === 'bot' ? 'SEC-BOT' : 'YOU'}]:</strong> ${text}`;
+            window.appendChild(div);
+            window.scrollTop = window.scrollHeight;
+        }
+
+        function checkEnter(e) { if(e.key === 'Enter') handleChat(); }
+    </script>
+</body>
+</html>
