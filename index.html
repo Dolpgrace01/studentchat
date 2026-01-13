@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-    <title>INDEX | Integrated Elite</title>
+    <title> Student Chat Hub | Marketplace </title>
     
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -14,106 +14,103 @@
 
     <style>
         :root { 
-            --gold: #d4af37; --gold-grad: linear-gradient(135deg, #d4af37 0%, #f5d17a 100%);
-            --bg: #020617; --glass: rgba(255, 255, 255, 0.03); --border: rgba(212, 175, 55, 0.2); 
+            --gold: #d4af37; 
+            --emerald: #064e3b; /* Deep Green */
+            --emerald-light: #10b981; 
+            --bg: #01120b; /* Very dark green-black */
+            --glass: rgba(255, 255, 255, 0.03); 
+            --border: rgba(212, 175, 55, 0.25); 
         }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body { margin: 0; padding: 0; height: 100vh; font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: #f8fafc; overflow: hidden; }
         
-        .screen { position: fixed; inset: 0; display: none; flex-direction: column; background: var(--bg); z-index: 100; padding-bottom: 80px; }
-        .active-screen { display: flex; }
-
-        /* HEADER & FOOTER */
-        .app-header { padding: 50px 20px 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); }
-        .footer-nav { position: fixed; bottom: 0; width: 100%; height: 75px; background: rgba(0,0,0,0.9); border-top: 1px solid var(--border); display: flex; justify-content: space-around; align-items: center; z-index: 1000; padding-bottom: 15px; }
-        .nav-item { color: #64748b; font-size: 1.2rem; display: flex; flex-direction: column; align-items: center; cursor: pointer; }
-        .nav-item.active { color: var(--gold); text-shadow: 0 0 10px rgba(212, 175, 55, 0.5); }
-
-        /* CARDS & TIMELINE */
-        .timeline-scroll { flex: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 20px; }
-        .post-card { background: var(--glass); border: 1px solid var(--border); border-radius: 24px; padding: 15px; overflow: hidden; }
-        .post-img { width: 100%; border-radius: 15px; margin-top: 10px; border: 1px solid rgba(255,255,255,0.1); }
+        /* AUTH GATES */
+        .auth-screen { position: fixed; inset: 0; background: var(--bg); z-index: 5000; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; }
+        .emerald-card { background: #000; border: 1px solid var(--gold); padding: 35px 25px; border-radius: 30px; width: 100%; max-width: 400px; box-shadow: 0 0 40px rgba(6, 78, 59, 0.4); text-align: center; }
         
-        /* POST CREATOR */
-        .post-input-box { background: var(--glass); border: 1px solid var(--gold); border-radius: 20px; padding: 15px; margin: 15px; }
-        textarea { width: 100%; background: transparent; border: none; color: white; resize: none; font-size: 1rem; outline: none; }
-        .media-btns { display: flex; gap: 15px; margin-top: 10px; color: var(--gold); }
+        input { width: 100%; padding: 15px; margin-bottom: 12px; border-radius: 12px; border: 1px solid var(--border); background: rgba(255,255,255,0.05); color: white; outline: none; transition: 0.3s; }
+        input:focus { border-color: var(--emerald-light); box-shadow: 0 0 10px rgba(16, 185, 129, 0.2); }
+        
+        .btn-elite { background: linear-gradient(135deg, #d4af37, #f5d17a); color: #000; border: none; padding: 16px; border-radius: 12px; font-weight: 800; cursor: pointer; width: 100%; text-transform: uppercase; letter-spacing: 1px; }
 
-        /* PROFILE VIEW */
-        #profileOverlay { position: fixed; inset: 0; background: var(--bg); z-index: 2000; display: none; flex-direction: column; overflow-y: auto; padding-bottom: 100px; }
-        .profile-header { height: 250px; background: var(--gold-grad); display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; }
-        .p-avatar { width: 110px; height: 110px; border-radius: 35px; border: 4px solid var(--bg); margin-top: 80px; }
-        .review-card { background: rgba(255,255,255,0.05); padding: 12px; border-radius: 12px; margin-bottom: 10px; border-left: 3px solid var(--gold); }
+        /* MAIN APP */
+        .main-container { display: none; height: 100vh; flex-direction: column; }
+        .header { padding: 50px 20px 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); background: rgba(6, 78, 59, 0.2); }
+        
+        /* TIMELINE & POSTS */
+        .content-area { flex: 1; overflow-y: auto; padding: 15px; padding-bottom: 100px; }
+        .post { background: var(--glass); border: 1px solid var(--border); border-radius: 20px; padding: 15px; margin-bottom: 20px; }
+        .post-header { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+        .post-img { width: 100%; border-radius: 15px; border: 1px solid var(--border); margin-top: 10px; }
 
-        /* AUTH GLASS */
-        .glass-card { background: #000; border: 1px solid var(--gold); padding: 30px; border-radius: 30px; width: 90%; max-width: 380px; text-align: center; }
-        .btn-gold { background: var(--gold-grad); color: black; border: none; padding: 15px; border-radius: 12px; font-weight: 800; cursor: pointer; width: 100%; margin-top: 10px; }
+        /* CHAT INTERFACE */
+        .chat-row { display: flex; align-items: center; gap: 15px; padding: 15px; background: rgba(255,255,255,0.02); border-radius: 15px; margin-bottom: 10px; border-left: 4px solid var(--gold); }
+        
+        /* FOOTER */
+        .footer { position: fixed; bottom: 0; width: 100%; height: 80px; background: rgba(1, 18, 11, 0.95); border-top: 1px solid var(--border); display: flex; justify-content: space-around; padding-bottom: 20px; align-items: center; }
+        .nav-link { color: #4b5563; display: flex; flex-direction: column; align-items: center; font-size: 0.75rem; text-decoration: none; cursor: pointer; }
+        .nav-link.active { color: var(--gold); }
+
+        .hidden { display: none !important; }
     </style>
 </head>
 <body>
 
-    <div id="pinScreen" class="screen active-screen" style="justify-content:center; align-items:center;">
-        <div class="glass-card">
-            <h1 style="font-family:'Cinzel'; color:var(--gold)">INDEX ELITE</h1>
-            <input type="password" id="appPin" placeholder="PIN" maxlength="4" style="width:100%; padding:15px; text-align:center; background:rgba(255,255,255,0.05); color:white; border:1px solid var(--border); border-radius:12px; font-size:1.5rem;">
-            <button class="btn-gold" onclick="verifyPin()">ENTER NODE</button>
+    <div id="pinGate" class="auth-screen">
+        <div class="emerald-card">
+            <h1 style="font-family:'Cinzel'; color:var(--gold)">ELITE ACCESS</h1>
+            <input type="password" id="pinInput" placeholder="ENTER NODE PIN" style="text-align:center; letter-spacing: 8px;">
+            <button class="btn-elite" onclick="checkPin()">UNSEAL</button>
         </div>
     </div>
 
-    <div id="appMain" style="display:none; height:100vh; flex-direction:column;">
-        
-        <header class="app-header">
-            <span style="font-family:'Cinzel'; color:var(--gold); font-size:1.4rem;">INDEX</span>
-            <div id="topUserBadge" onclick="showSelfProfile()"></div>
+    <div id="authGate" class="auth-screen hidden">
+        <div class="emerald-card">
+            <h2 id="authTitle" style="font-family:'Cinzel'; color:var(--gold); margin-bottom: 20px;"> CAMPUS SELLR </h2>
+            <div id="regFields" class="hidden">
+                <input type="text" id="regMatric" placeholder="MATRIC NUMBER">
+                <input type="text" id="regUser" placeholder="CHOOSE USERNAME">
+            </div>
+            <input type="email" id="authEmail" placeholder="GMAIL ADDRESS">
+            <input type="password" id="authPass" placeholder="PASSWORD">
+            <button class="btn-elite" id="authBtn" onclick="handleAuth()"> LOGIN </button>
+            <p onclick="toggleAuth()" id="authToggle" style="margin-top:15px; font-size:0.8rem; color:var(--gold); cursor:pointer;"> New Student huh? Register Now!</p>
+        </div>
+    </div>
+
+    <div id="mainApp" class="main-container">
+        <header class="header">
+            <span style="font-family:'Cinzel'; color:var(--gold); font-size:1.4rem; letter-spacing: 2px;"> DG Chat </span>
+            <div id="myBadge" onclick="showProfile()"></div>
         </header>
 
-        <div id="tab-timeline" class="screen active-screen">
-            <div class="post-input-box">
-                <textarea id="postText" placeholder="What's on your elite mind?"></textarea>
-                <div id="postPreview"></div>
-                <div class="media-btns">
-                    <i class="fas fa-image" onclick="document.getElementById('postFile').click()"></i>
-                    <i class="fas fa-magic" onclick="alert('AI Aesthetics Applied')"></i>
-                    <i class="fas fa-music" onclick="alert('Spotify Uplink Active')"></i>
-                    <button class="btn-gold" style="width:80px; padding:5px; margin:0; margin-left:auto;" onclick="submitPost()">POST</button>
-                </div>
-                <input type="file" id="postFile" hidden onchange="previewPostFile(this)">
+        <div id="timelineTab" class="content-area">
+            <div class="emerald-card" style="max-width: none; margin-bottom: 20px; padding: 15px;">
+                <textarea id="postTxt" placeholder="Post to the timeline..." style="width:100%; background:transparent; border:none; color:white; outline:none; height:60px;"></textarea>
+                <button class="btn-elite" style="width:auto; padding:8px 20px; margin-top:10px;" onclick="addPost()">POST</button>
             </div>
-            <div id="timelineFeed" class="timeline-scroll"></div>
+            <div id="feed"></div>
         </div>
 
-        <div id="tab-chat" class="screen">
-            <div style="padding:20px;"><h2 style="font-family:'Cinzel'; color:var(--gold)">MESSAGES</h2></div>
-            <div id="userList" class="timeline-scroll"></div>
+        <div id="chatTab" class="content-area hidden">
+            <h3 style="color:var(--gold); font-family:'Cinzel'; margin-bottom: 15px;"> CHATS</h3>
+            <div id="userList"></div>
         </div>
 
-        <div id="tab-profile" class="screen">
-            <div class="timeline-scroll" id="selfProfileContent"></div>
-        </div>
-
-        <nav class="footer-nav">
-            <div class="nav-item active" id="nav-timeline" onclick="switchTab('timeline')"><i class="fas fa-bolt"></i><small>Timeline</small></div>
-            <div class="nav-item" id="nav-chat" onclick="switchTab('chat')"><i class="fas fa-comments"></i><small>Chat</small></div>
-            <div class="nav-item" id="nav-profile" onclick="switchTab('profile')"><i class="fas fa-user-crown"></i><small>Profile</small></div>
-        </nav>
-    </div>
-
-    <div id="profileOverlay">
-        <div class="profile-header">
-            <i class="fas fa-chevron-left" style="position:absolute; top:50px; left:20px; font-size:1.5rem;" onclick="closeProfile()"></i>
-            <img id="view-p-avatar" class="p-avatar">
-        </div>
-        <div style="padding:20px; text-align:center;">
-            <h2 id="view-p-name" style="font-family:'Cinzel'; margin-top:10px;">Username</h2>
-            <p id="view-p-phone" style="color:var(--gold); font-size:0.9rem;"></p>
-            <div style="display:flex; justify-content:center; gap:10px; margin-top:15px;">
-                <button class="btn-gold" style="width:120px;" id="p-chat-btn">MESSAGE</button>
-                <button class="btn-gold" style="width:120px; background:transparent; border:1px solid var(--gold); color:white;" onclick="addReview()">REVIEW</button>
+        <div id="profileTab" class="content-area hidden">
+            <div class="emerald-card" style="max-width: none;">
+                <img id="myLargeAvatar" style="width:100px; height:100px; border-radius:30px; border:2px solid var(--gold);">
+                <h2 id="myName" style="margin-top:10px;">Username</h2>
+                <p id="myMatric" style="color:var(--gold); opacity:0.8;">Matric: </p>
+                <button class="btn-elite" style="margin-top:20px; background:transparent; border:1px solid red; color:red;" onclick="logout()">DISCONNECT</button>
             </div>
-            <hr style="border:0; border-top:1px solid var(--border); margin:25px 0;">
-            <h4 style="text-align:left; color:var(--gold); margin-bottom:15px;">STUDENT REVIEWS</h4>
-            <div id="reviewsList" style="text-align:left;"></div>
         </div>
+
+        <footer class="footer">
+            <div class="nav-link active" onclick="switchTab('timeline', this)"><i class="fas fa-crown"></i><span>Members</span></div>
+            <div class="nav-link" onclick="switchTab('chat', this)"><i class="fas fa-comment-dots"></i><span>Chat</span></div>
+            <div class="nav-link" onclick="switchTab('profile', this)"><i class="fas fa-user-shield"></i><span>Identity</span></div>
+        </footer>
     </div>
 
     <script>
@@ -126,128 +123,132 @@
             appId: "1:1026158969514:web:a25655005d2868ec6c46d3"
         };
         firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
+        const auth = firebase.auth(), db = firebase.firestore();
 
-        let me = JSON.parse(localStorage.getItem('elite_user')) || null;
-        let postMedia = "";
+        let userData = null;
+        let isLogin = true;
 
-        // --- CORE NAVIGATION ---
-        function verifyPin() {
-            if(document.getElementById('appPin').value === "1231") {
-                if(!me) { /* Trigger Auth Flow - simplified for code limit */ 
-                    me = { username: "GuestElite", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Elite" };
+        // --- AUTH FLOW ---
+        function checkPin() {
+            if(document.getElementById('pinInput').value === "1231") {
+                document.getElementById('pinGate').classList.add('hidden');
+                document.getElementById('authGate').classList.remove('hidden');
+            } else { alert("ACCESS DENIED"); }
+        }
+
+        function toggleAuth() {
+            isLogin = !isLogin;
+            document.getElementById('authTitle').innerText = isLogin ? "CAMPUS UPLINK" : "ELITE REGISTRATION";
+            document.getElementById('regFields').classList.toggle('hidden', isLogin);
+            document.getElementById('authBtn').innerText = isLogin ? "LOGIN" : "REGISTER";
+        }
+
+        async function handleAuth() {
+            const email = document.getElementById('authEmail').value;
+            const pass = document.getElementById('authPass').value;
+            
+            try {
+                if(isLogin) {
+                    await auth.signInWithEmailAndPassword(email, pass);
+                } else {
+                    const user = document.getElementById('regUser').value;
+                    const matric = document.getElementById('regMatric').value;
+                    if(!user || !matric) return alert("Fill all fields");
+                    
+                    const cred = await auth.createUserWithEmailAndPassword(email, pass);
+                    const profile = {
+                        uid: cred.user.uid,
+                        username: user,
+                        matric: matric,
+                        email: email,
+                        avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${user}`
+                    };
+                    await db.collection("users").doc(cred.user.uid).set(profile);
                 }
-                document.getElementById('pinScreen').style.display = 'none';
-                document.getElementById('appMain').style.display = 'flex';
+            } catch (e) { alert(e.message); }
+        }
+
+        auth.onAuthStateChanged(async (user) => {
+            if(user) {
+                const doc = await db.collection("users").doc(user.uid).get();
+                userData = doc.data();
+                document.getElementById('authGate').classList.add('hidden');
+                document.getElementById('mainApp').style.display = 'flex';
                 initApp();
+            } else {
+                document.getElementById('mainApp').style.display = 'none';
+                document.getElementById('authGate').classList.remove('hidden');
             }
-        }
+        });
 
-        function switchTab(t) {
-            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active-screen'));
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-            document.getElementById('tab-'+t).classList.add('active-screen');
-            document.getElementById('nav-'+t).classList.add('active');
-        }
-
+        // --- APP LOGIC ---
         function initApp() {
-            document.getElementById('topUserBadge').innerHTML = `<img src="${me.avatar}" style="width:35px; border-radius:10px; border:1px solid var(--gold);">`;
+            document.getElementById('myBadge').innerHTML = `<img src="${userData.avatar}" style="width:35px; border-radius:8px; border:1px solid var(--gold);">`;
+            document.getElementById('myName').innerText = userData.username;
+            document.getElementById('myMatric').innerText = "Matric: " + userData.matric;
+            document.getElementById('myLargeAvatar').src = userData.avatar;
             loadTimeline();
-            loadUsers();
+            loadUserList();
         }
 
-        // --- TIMELINE LOGIC ---
-        function previewPostFile(input) {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                postMedia = e.target.result;
-                document.getElementById('postPreview').innerHTML = `<img src="${postMedia}" style="width:100px; border-radius:10px; margin-top:10px;">`;
-            };
-            reader.readAsDataURL(input.files[0]);
+        function switchTab(tab, el) {
+            document.querySelectorAll('.content-area').forEach(t => t.classList.add('hidden'));
+            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+            document.getElementById(tab + 'Tab').classList.remove('hidden');
+            el.classList.add('active');
         }
 
-        async function submitPost() {
-            const txt = document.getElementById('postText').value;
-            if(!txt && !postMedia) return;
+        async function addPost() {
+            const txt = document.getElementById('postTxt').value;
+            if(!txt) return;
             await db.collection("posts").add({
-                uName: me.username, uAvatar: me.avatar,
-                text: txt, media: postMedia,
+                username: userData.username,
+                avatar: userData.avatar,
+                text: txt,
                 timestamp: Date.now()
             });
-            document.getElementById('postText').value = "";
-            document.getElementById('postPreview').innerHTML = "";
-            postMedia = "";
+            document.getElementById('postTxt').value = "";
         }
 
         function loadTimeline() {
             db.collection("posts").orderBy("timestamp", "desc").onSnapshot(snap => {
-                const feed = document.getElementById('timelineFeed');
+                const feed = document.getElementById('feed');
                 feed.innerHTML = "";
                 snap.forEach(doc => {
                     const p = doc.data();
                     feed.innerHTML += `
-                        <div class="post-card">
-                            <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;" onclick="openUserProfile('${p.uName}')">
-                                <img src="${p.uAvatar}" style="width:35px; border-radius:50%">
-                                <b>${p.uName}</b>
+                        <div class="post">
+                            <div class="post-header">
+                                <img src="${p.avatar}" style="width:30px; border-radius:50%">
+                                <b>${p.username}</b>
                             </div>
                             <p>${p.text}</p>
-                            ${p.media ? `<img src="${p.media}" class="post-img">` : ''}
                         </div>`;
                 });
             });
         }
 
-        // --- PROFILE & REVIEWS ---
-        async function openUserProfile(username) {
-            const doc = await db.collection("users").doc(username).get();
-            const u = doc.data() || { username, avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${username}` };
-            
-            document.getElementById('view-p-avatar').src = u.avatar;
-            document.getElementById('view-p-name').innerText = u.username;
-            document.getElementById('view-p-phone').innerText = u.phone || "Privacy Shield Active";
-            document.getElementById('profileOverlay').style.display = 'flex';
-            
-            loadReviews(username);
-        }
-
-        function loadReviews(username) {
-            db.collection("users").doc(username).collection("reviews").onSnapshot(snap => {
-                const list = document.getElementById('reviewsList');
-                list.innerHTML = snap.empty ? '<p style="opacity:0.5">No elite reviews yet.</p>' : '';
-                snap.forEach(d => {
-                    const r = d.data();
-                    list.innerHTML += `<div class="review-card"><b>${r.from}:</b> ${r.text}</div>`;
-                });
-            });
-        }
-
-        async function addReview() {
-            const target = document.getElementById('view-p-name').innerText;
-            const rev = prompt("Write your review for this student:");
-            if(rev) {
-                await db.collection("users").doc(target).collection("reviews").add({
-                    from: me.username, text: rev, timestamp: Date.now()
-                });
-            }
-        }
-
-        function closeProfile() { document.getElementById('profileOverlay').style.display = 'none'; }
-
-        function loadUsers() {
+        function loadUserList() {
             db.collection("users").onSnapshot(snap => {
                 const list = document.getElementById('userList');
                 list.innerHTML = "";
-                snap.forEach(d => {
-                    const u = d.data(); if(u.username === me.username) return;
-                    list.innerHTML += `<div class="post-card" style="display:flex; align-items:center; gap:15px;" onclick="openUserProfile('${u.username}')">
-                        <img src="${u.avatar}" style="width:45px; border-radius:50%">
-                        <b>${u.username}</b>
-                        <i class="fas fa-chevron-right" style="margin-left:auto; color:var(--gold)"></i>
-                    </div>`;
+                snap.forEach(doc => {
+                    const u = doc.data();
+                    if(u.uid === userData.uid) return;
+                    list.innerHTML += `
+                        <div class="chat-row">
+                            <img src="${u.avatar}" style="width:40px; border-radius:10px;">
+                            <div style="flex:1">
+                                <b>${u.username}</b><br>
+                                <small style="opacity:0.6">${u.matric}</small>
+                            </div>
+                            <i class="fas fa-paper-plane" style="color:var(--gold)"></i>
+                        </div>`;
                 });
             });
         }
+
+        function logout() { auth.signOut(); location.reload(); }
     </script>
 </body>
 </html>
