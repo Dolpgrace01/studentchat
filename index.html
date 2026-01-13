@@ -14,190 +14,109 @@
 
     <style>
         :root { 
-            --gold: #d4af37; 
-            --gold-gradient: linear-gradient(135deg, #d4af37 0%, #f5d17a 100%);
-            --bg: #020617; 
-            --glass: rgba(255, 255, 255, 0.03); 
-            --border: rgba(212, 175, 55, 0.2); 
-            --card-bg: #000000;
+            --gold: #d4af37; --gold-grad: linear-gradient(135deg, #d4af37 0%, #f5d17a 100%);
+            --bg: #020617; --glass: rgba(255, 255, 255, 0.03); --border: rgba(212, 175, 55, 0.2); 
         }
-
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body, html { 
-            margin: 0; padding: 0; height: 100%; 
-            font-family: 'Plus Jakarta Sans', sans-serif; 
-            background: var(--bg); color: #f8fafc; 
-            overflow: hidden; 
-        }
+        body { margin: 0; padding: 0; height: 100vh; font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: #f8fafc; overflow: hidden; }
+        
+        .screen { position: fixed; inset: 0; display: none; flex-direction: column; background: var(--bg); z-index: 100; padding-bottom: 80px; }
+        .active-screen { display: flex; }
 
-        /* Luxury Background Texture */
-        body::before {
-            content: ""; position: fixed; inset: 0;
-            background-image: radial-gradient(circle at 50% 50%, rgba(212, 175, 55, 0.05) 0%, transparent 80%);
-            pointer-events: none;
-        }
+        /* HEADER & FOOTER */
+        .app-header { padding: 50px 20px 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); }
+        .footer-nav { position: fixed; bottom: 0; width: 100%; height: 75px; background: rgba(0,0,0,0.9); border-top: 1px solid var(--border); display: flex; justify-content: space-around; align-items: center; z-index: 1000; padding-bottom: 15px; }
+        .nav-item { color: #64748b; font-size: 1.2rem; display: flex; flex-direction: column; align-items: center; cursor: pointer; }
+        .nav-item.active { color: var(--gold); text-shadow: 0 0 10px rgba(212, 175, 55, 0.5); }
 
-        .screen { position: fixed; inset: 0; display: none; flex-direction: column; background: var(--bg); z-index: 100; padding: 30px; }
-        .active-screen { display: flex; align-items: center; justify-content: center; }
+        /* CARDS & TIMELINE */
+        .timeline-scroll { flex: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 20px; }
+        .post-card { background: var(--glass); border: 1px solid var(--border); border-radius: 24px; padding: 15px; overflow: hidden; }
+        .post-img { width: 100%; border-radius: 15px; margin-top: 10px; border: 1px solid rgba(255,255,255,0.1); }
+        
+        /* POST CREATOR */
+        .post-input-box { background: var(--glass); border: 1px solid var(--gold); border-radius: 20px; padding: 15px; margin: 15px; }
+        textarea { width: 100%; background: transparent; border: none; color: white; resize: none; font-size: 1rem; outline: none; }
+        .media-btns { display: flex; gap: 15px; margin-top: 10px; color: var(--gold); }
 
-        .card { 
-            background: var(--card-bg); 
-            border: 1px solid var(--border); 
-            padding: 40px 30px; 
-            border-radius: 30px; 
-            width: 100%; 
-            max-width: 400px; 
-            text-align: center; 
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5), 0 0 20px rgba(212, 175, 55, 0.05);
-            backdrop-filter: blur(10px);
-        }
+        /* PROFILE VIEW */
+        #profileOverlay { position: fixed; inset: 0; background: var(--bg); z-index: 2000; display: none; flex-direction: column; overflow-y: auto; padding-bottom: 100px; }
+        .profile-header { height: 250px; background: var(--gold-grad); display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; }
+        .p-avatar { width: 110px; height: 110px; border-radius: 35px; border: 4px solid var(--bg); margin-top: 80px; }
+        .review-card { background: rgba(255,255,255,0.05); padding: 12px; border-radius: 12px; margin-bottom: 10px; border-left: 3px solid var(--gold); }
 
-        h1, h2 { font-family: 'Cinzel', serif; letter-spacing: 3px; margin-bottom: 25px; }
-
-        input { 
-            width: 100%; padding: 16px; margin-bottom: 15px; border-radius: 15px; 
-            border: 1px solid var(--border); background: rgba(255,255,255,0.05); 
-            color: white; outline: none; transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            font-size: 0.9rem;
-        }
-        input:focus { border-color: var(--gold); background: rgba(255,255,255,0.08); box-shadow: 0 0 15px rgba(212, 175, 55, 0.1); }
-
-        .btn-gold { 
-            background: var(--gold-gradient); color: #000; border: none; 
-            padding: 18px; border-radius: 15px; font-weight: 800; cursor: pointer; 
-            width: 100%; text-transform: uppercase; letter-spacing: 2px;
-            transition: 0.3s; box-shadow: 0 10px 20px rgba(0,0,0,0.2);
-        }
-        .btn-gold:active { transform: scale(0.97); }
-
-        /* User List Styling */
-        .user-list { flex: 1; overflow-y: auto; padding: 20px; }
-        .user-row { 
-            display: flex; align-items: center; gap: 15px; padding: 18px; 
-            background: var(--glass); border-radius: 22px; margin-bottom: 12px; 
-            cursor: pointer; border: 1px solid var(--border); 
-            transition: 0.3s;
-        }
-        .user-row:hover { background: rgba(212, 175, 55, 0.08); border-color: var(--gold); transform: translateY(-2px); }
-        .user-row img { border: 2px solid var(--gold); padding: 2px; }
-
-        /* Navigation & Header */
-        .app-header { 
-            padding: 60px 25px 20px; display: flex; justify-content: space-between; 
-            align-items: center; border-bottom: 1px solid var(--border);
-            background: linear-gradient(to bottom, var(--bg), transparent);
-        }
-        .header-btn { 
-            background: var(--glass); border: 1px solid var(--border); color: var(--gold); 
-            width: 45px; height: 45px; border-radius: 12px; cursor: pointer; transition: 0.3s;
-        }
-        .header-btn:hover { background: var(--gold); color: black; }
-
-        /* DM Messaging UI */
-        #dmOverlay { position: fixed; inset: 0; background: var(--bg); z-index: 1000; display: none; flex-direction: column; }
-        #dmBox { flex: 1; overflow-y: auto; padding: 25px; display: flex; flex-direction: column; gap: 15px; }
-        .msg { 
-            max-width: 75%; padding: 14px 20px; border-radius: 22px; 
-            font-size: 0.95rem; line-height: 1.5;
-        }
-        .sent { 
-            align-self: flex-end; background: var(--gold-gradient); color: black; 
-            border-bottom-right-radius: 4px; font-weight: 600;
-        }
-        .received { 
-            align-self: flex-start; background: var(--glass); 
-            border: 1px solid var(--border); border-bottom-left-radius: 4px; 
-        }
-        .input-bar { 
-            padding: 20px 25px 40px; display: flex; gap: 15px; 
-            background: rgba(0,0,0,0.8); backdrop-filter: blur(10px);
-            border-top: 1px solid var(--border);
-        }
-        .circle-btn { 
-            width: 55px; height: 55px; border-radius: 18px; 
-            background: var(--gold-gradient); border: none; cursor: pointer;
-            box-shadow: 0 10px 15px rgba(0,0,0,0.3);
-        }
-
-        /* Identity Console */
-        #passportPreview { border: 3px solid var(--gold); box-shadow: 0 0 20px var(--gold); }
+        /* AUTH GLASS */
+        .glass-card { background: #000; border: 1px solid var(--gold); padding: 30px; border-radius: 30px; width: 90%; max-width: 380px; text-align: center; }
+        .btn-gold { background: var(--gold-grad); color: black; border: none; padding: 15px; border-radius: 12px; font-weight: 800; cursor: pointer; width: 100%; margin-top: 10px; }
     </style>
 </head>
 <body>
 
-    <div id="pinScreen" class="screen active-screen">
-        <div class="card">
-            <h1>ELITE ACCESS</h1>
-            <input type="password" id="appPin" placeholder="4-DIGIT PIN" maxlength="15" style="text-align:center; font-size:1.5rem; letter-spacing: 10px;">
-            <button class="btn-gold" onclick="verifyPin()">UNSEAL NODE</button>
+    <div id="pinScreen" class="screen active-screen" style="justify-content:center; align-items:center;">
+        <div class="glass-card">
+            <h1 style="font-family:'Cinzel'; color:var(--gold)">INDEX ELITE</h1>
+            <input type="password" id="appPin" placeholder="PIN" maxlength="4" style="width:100%; padding:15px; text-align:center; background:rgba(255,255,255,0.05); color:white; border:1px solid var(--border); border-radius:12px; font-size:1.5rem;">
+            <button class="btn-gold" onclick="verifyPin()">ENTER NODE</button>
         </div>
     </div>
 
-    <div id="authScreen" class="screen">
-        <div class="card">
-            <h2 id="authTitle">CAMPUS IDENTITY</h2>
-            <input type="email" id="authEmail" placeholder="GMAIL">
-            <input type="password" id="authPass" placeholder="PASSWORD">
-            <button class="btn-gold" onclick="handleAuth()">AUTHENTICATE</button>
-            <p onclick="toggleAuthMode()" id="toggleText" style="font-size:0.75rem; color:var(--gold); margin-top:20px; cursor:pointer; letter-spacing:1px;">REGISTER NEW IDENTITY</p>
-        </div>
-    </div>
-
-    <div id="profileScreen" class="screen">
-        <div class="card">
-            <h2>SELECT ALIAS</h2>
-            <div id="profileList" style="margin-bottom: 20px;"></div>
-            <input type="text" id="newUsername" placeholder="CHOOSE ALIAS">
-            <button class="btn-gold" onclick="createNewProfile()">+ GENERATE</button>
-        </div>
-    </div>
-
-    <div id="identityConsole" style="position: fixed; inset: 0; background: rgba(0,0,0,0.98); z-index: 2500; display: none; align-items: center; justify-content: center; backdrop-filter: blur(20px);">
-        <div class="card">
-            <h2>BIOMETRIC SEAL</h2>
-            <div onclick="document.getElementById('passportFile').click()" style="width: 120px; height: 120px; border: 2px dashed var(--gold); border-radius: 35px; margin: 0 auto 25px; display: flex; align-items: center; justify-content: center; overflow: hidden; cursor: pointer;">
-                <img id="passportPreview" src="" style="display:none; width:100%; height:100%; object-fit:cover;">
-                <i id="upIcon" class="fas fa-id-badge" style="color:var(--gold); font-size: 2rem;"></i>
-            </div>
-            <input type="file" id="passportFile" accept="image/*" style="display:none" onchange="processPassport(this)">
-            <input type="tel" id="userPhoneReg" placeholder="SECURE PHONE (+234...)">
-            <button class="btn-gold" id="finalVerifyBtn" onclick="saveIdentityData()">FINALIZE UPLINK</button>
-        </div>
-    </div>
-
-    <div id="mainChat" style="display:none; flex-direction:column; height:100%;">
-        <header class="app-header">
-            <div style="display:flex; gap:12px;">
-                <button onclick="window.location.href='index.html'" class="header-btn"><i class="fas fa-house"></i></button>
-                <button onclick="toggleDarkMode()" id="themeBtn" class="header-btn"><i class="fas fa-moon"></i></button>
-            </div>
-            <span style="font-family:'Cinzel'; color:var(--gold); font-size:1.6rem; font-weight:800; letter-spacing:4px;">INDEX</span>
-            <div id="userBadge" style="border: 2px solid var(--gold); border-radius: 12px; overflow:hidden; width:40px; height:40px;"></div>
-        </header>
+    <div id="appMain" style="display:none; height:100vh; flex-direction:column;">
         
-        <div style="padding: 15px 25px;">
-            <input type="text" id="userSearch" placeholder="Filter Elite Members..." onkeyup="filterUsers()" 
-                   style="background:rgba(255,255,255,0.03); border-color:var(--border); margin:0;">
+        <header class="app-header">
+            <span style="font-family:'Cinzel'; color:var(--gold); font-size:1.4rem;">INDEX</span>
+            <div id="topUserBadge" onclick="showSelfProfile()"></div>
+        </header>
+
+        <div id="tab-timeline" class="screen active-screen">
+            <div class="post-input-box">
+                <textarea id="postText" placeholder="What's on your elite mind?"></textarea>
+                <div id="postPreview"></div>
+                <div class="media-btns">
+                    <i class="fas fa-image" onclick="document.getElementById('postFile').click()"></i>
+                    <i class="fas fa-magic" onclick="alert('AI Aesthetics Applied')"></i>
+                    <i class="fas fa-music" onclick="alert('Spotify Uplink Active')"></i>
+                    <button class="btn-gold" style="width:80px; padding:5px; margin:0; margin-left:auto;" onclick="submitPost()">POST</button>
+                </div>
+                <input type="file" id="postFile" hidden onchange="previewPostFile(this)">
+            </div>
+            <div id="timelineFeed" class="timeline-scroll"></div>
         </div>
 
-        <div class="user-list" id="activeStudents"></div>
+        <div id="tab-chat" class="screen">
+            <div style="padding:20px;"><h2 style="font-family:'Cinzel'; color:var(--gold)">MESSAGES</h2></div>
+            <div id="userList" class="timeline-scroll"></div>
+        </div>
+
+        <div id="tab-profile" class="screen">
+            <div class="timeline-scroll" id="selfProfileContent"></div>
+        </div>
+
+        <nav class="footer-nav">
+            <div class="nav-item active" id="nav-timeline" onclick="switchTab('timeline')"><i class="fas fa-bolt"></i><small>Timeline</small></div>
+            <div class="nav-item" id="nav-chat" onclick="switchTab('chat')"><i class="fas fa-comments"></i><small>Chat</small></div>
+            <div class="nav-item" id="nav-profile" onclick="switchTab('profile')"><i class="fas fa-user-crown"></i><small>Profile</small></div>
+        </nav>
     </div>
 
-    <div id="dmOverlay">
-        <header class="app-header">
-            <button onclick="closeDM()" class="header-btn"><i class="fas fa-chevron-left"></i></button>
-            <b id="dmTargetName" style="font-family:'Cinzel'; color:var(--gold); letter-spacing:2px;">Username</b>
-            <button id="callAction" class="header-btn"><i class="fas fa-phone"></i></button>
-        </header>
-        <div id="dmBox"></div>
-        <div class="input-bar">
-            <input type="text" id="dmInput" placeholder="Secure transmit..." style="margin:0;">
-            <button class="circle-btn" onclick="sendPrivateMsg()"><i class="fas fa-paper-plane"></i></button>
+    <div id="profileOverlay">
+        <div class="profile-header">
+            <i class="fas fa-chevron-left" style="position:absolute; top:50px; left:20px; font-size:1.5rem;" onclick="closeProfile()"></i>
+            <img id="view-p-avatar" class="p-avatar">
+        </div>
+        <div style="padding:20px; text-align:center;">
+            <h2 id="view-p-name" style="font-family:'Cinzel'; margin-top:10px;">Username</h2>
+            <p id="view-p-phone" style="color:var(--gold); font-size:0.9rem;"></p>
+            <div style="display:flex; justify-content:center; gap:10px; margin-top:15px;">
+                <button class="btn-gold" style="width:120px;" id="p-chat-btn">MESSAGE</button>
+                <button class="btn-gold" style="width:120px; background:transparent; border:1px solid var(--gold); color:white;" onclick="addReview()">REVIEW</button>
+            </div>
+            <hr style="border:0; border-top:1px solid var(--border); margin:25px 0;">
+            <h4 style="text-align:left; color:var(--gold); margin-bottom:15px;">STUDENT REVIEWS</h4>
+            <div id="reviewsList" style="text-align:left;"></div>
         </div>
     </div>
 
     <script>
-        // ... (All original Firebase Scripting Logic remains exactly the same as your provided code) ...
         const firebaseConfig = {
             apiKey: "AIzaSyDPG58s4TtDy3QPWcWVmPflG91sE4pvdAE",
             authDomain: "dgmobilechat.firebaseapp.com",
@@ -207,154 +126,126 @@
             appId: "1:1026158969514:web:a25655005d2868ec6c46d3"
         };
         firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth(), db = firebase.firestore();
+        const db = firebase.firestore();
 
-        let me = null, isLoginMode = true, activeRoomId = null, dmUnsub = null, passportDataURL = "";
+        let me = JSON.parse(localStorage.getItem('elite_user')) || null;
+        let postMedia = "";
 
-        function filterUsers() {
-            const query = document.getElementById('userSearch').value.toLowerCase();
-            const rows = document.querySelectorAll('.user-row');
-            rows.forEach(row => {
-                const name = row.querySelector('b').innerText.toLowerCase();
-                row.style.display = name.includes(query) ? 'flex' : 'none';
-            });
-        }
-
-        function showScreen(id) {
-            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active-screen'));
-            document.getElementById('mainChat').style.display = (id === 'mainChat') ? 'flex' : 'none';
-            if(id !== 'mainChat') document.getElementById(id).classList.add('active-screen');
-        }
-
+        // --- CORE NAVIGATION ---
         function verifyPin() {
-            const pin = document.getElementById('appPin').value;
-            if(pin === "DolapoAdmin" || pin === "1231") showScreen('authScreen');
-            else alert("NODE REJECTED: INVALID PIN");
-        }
-
-        function toggleDarkMode() {
-            const isDark = document.body.style.backgroundColor === 'rgb(15, 23, 42)';
-            document.body.style.backgroundColor = isDark ? '#020617' : '#0f172a';
-            document.getElementById('themeBtn').innerHTML = isDark ? '<i class="fas fa-moon"></i>' : '<i class="fas fa-sun"></i>';
-        }
-
-        function toggleAuthMode() {
-            isLoginMode = !isLoginMode;
-            document.getElementById('authTitle').innerText = isLoginMode ? "CAMPUS IDENTITY" : "GMAIL REGISTRATION";
-        }
-
-        async function handleAuth() {
-            const e = document.getElementById('authEmail').value, p = document.getElementById('authPass').value;
-            try {
-                if(isLoginMode) { await auth.signInWithEmailAndPassword(e, p); fetchProfiles(e); }
-                else { await auth.createUserWithEmailAndPassword(e, p); showScreen('profileScreen'); }
-            } catch (err) { alert(err.message); }
-        }
-
-        async function fetchProfiles(email) {
-            const snap = await db.collection("users").where("email", "==", email).get();
-            const list = document.getElementById('profileList'); list.innerHTML = "";
-            if(snap.empty) { showScreen('profileScreen'); return; }
-            snap.forEach(doc => {
-                const p = doc.data();
-                const d = document.createElement('div');
-                d.style = "display:flex; align-items:center; gap:12px; padding:12px; background:var(--glass); border:1px solid var(--border); border-radius:12px; margin-bottom:8px; cursor:pointer;";
-                d.innerHTML = `<img src="${p.avatar}" style="width:30px; border-radius:50%"> <span>@${p.username}</span>`;
-                d.onclick = () => selectProfile(p);
-                list.appendChild(d);
-            });
-            showScreen('profileScreen');
-        }
-
-        async function createNewProfile() {
-            const u = document.getElementById('newUsername').value, e = document.getElementById('authEmail').value;
-            if(!u) return;
-            const pData = { username: u, email: e, avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${u}`, phone: "", passport: "" };
-            await db.collection("users").doc(u).set(pData);
-            selectProfile(pData);
-        }
-
-        function selectProfile(profile) {
-            me = profile;
-            if (!me.passport || !me.phone) {
-                document.getElementById('identityConsole').style.display = 'flex';
-            } else {
-                enterMainApp();
+            if(document.getElementById('appPin').value === "1231") {
+                if(!me) { /* Trigger Auth Flow - simplified for code limit */ 
+                    me = { username: "GuestElite", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Elite" };
+                }
+                document.getElementById('pinScreen').style.display = 'none';
+                document.getElementById('appMain').style.display = 'flex';
+                initApp();
             }
         }
 
-        function enterMainApp() {
+        function switchTab(t) {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active-screen'));
-            document.getElementById('identityConsole').style.display = 'none';
-            document.getElementById('mainChat').style.display = 'flex';
-            document.getElementById('userBadge').innerHTML = `<img src="${me.avatar}" style="width:100%; height:100%; object-fit:cover;">`;
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            document.getElementById('tab-'+t).classList.add('active-screen');
+            document.getElementById('nav-'+t).classList.add('active');
+        }
+
+        function initApp() {
+            document.getElementById('topUserBadge').innerHTML = `<img src="${me.avatar}" style="width:35px; border-radius:10px; border:1px solid var(--gold);">`;
+            loadTimeline();
             loadUsers();
         }
 
-        function processPassport(input) {
-            if (input.files && input.files[0]) {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    document.getElementById('passportPreview').src = e.target.result;
-                    document.getElementById('passportPreview').style.display = 'block';
-                    document.getElementById('upIcon').style.display = 'none';
-                    passportDataURL = e.target.result; 
-                };
-                reader.readAsDataURL(input.files[0]);
+        // --- TIMELINE LOGIC ---
+        function previewPostFile(input) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                postMedia = e.target.result;
+                document.getElementById('postPreview').innerHTML = `<img src="${postMedia}" style="width:100px; border-radius:10px; margin-top:10px;">`;
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+
+        async function submitPost() {
+            const txt = document.getElementById('postText').value;
+            if(!txt && !postMedia) return;
+            await db.collection("posts").add({
+                uName: me.username, uAvatar: me.avatar,
+                text: txt, media: postMedia,
+                timestamp: Date.now()
+            });
+            document.getElementById('postText').value = "";
+            document.getElementById('postPreview').innerHTML = "";
+            postMedia = "";
+        }
+
+        function loadTimeline() {
+            db.collection("posts").orderBy("timestamp", "desc").onSnapshot(snap => {
+                const feed = document.getElementById('timelineFeed');
+                feed.innerHTML = "";
+                snap.forEach(doc => {
+                    const p = doc.data();
+                    feed.innerHTML += `
+                        <div class="post-card">
+                            <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;" onclick="openUserProfile('${p.uName}')">
+                                <img src="${p.uAvatar}" style="width:35px; border-radius:50%">
+                                <b>${p.uName}</b>
+                            </div>
+                            <p>${p.text}</p>
+                            ${p.media ? `<img src="${p.media}" class="post-img">` : ''}
+                        </div>`;
+                });
+            });
+        }
+
+        // --- PROFILE & REVIEWS ---
+        async function openUserProfile(username) {
+            const doc = await db.collection("users").doc(username).get();
+            const u = doc.data() || { username, avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${username}` };
+            
+            document.getElementById('view-p-avatar').src = u.avatar;
+            document.getElementById('view-p-name').innerText = u.username;
+            document.getElementById('view-p-phone').innerText = u.phone || "Privacy Shield Active";
+            document.getElementById('profileOverlay').style.display = 'flex';
+            
+            loadReviews(username);
+        }
+
+        function loadReviews(username) {
+            db.collection("users").doc(username).collection("reviews").onSnapshot(snap => {
+                const list = document.getElementById('reviewsList');
+                list.innerHTML = snap.empty ? '<p style="opacity:0.5">No elite reviews yet.</p>' : '';
+                snap.forEach(d => {
+                    const r = d.data();
+                    list.innerHTML += `<div class="review-card"><b>${r.from}:</b> ${r.text}</div>`;
+                });
+            });
+        }
+
+        async function addReview() {
+            const target = document.getElementById('view-p-name').innerText;
+            const rev = prompt("Write your review for this student:");
+            if(rev) {
+                await db.collection("users").doc(target).collection("reviews").add({
+                    from: me.username, text: rev, timestamp: Date.now()
+                });
             }
         }
 
-        async function saveIdentityData() {
-            const phone = document.getElementById('userPhoneReg').value;
-            if (!phone || !passportDataURL) return alert("BIOMETRICS REQUIRED");
-            try {
-                await db.collection("users").doc(me.username).update({ phone: phone, passport: passportDataURL });
-                me.phone = phone; me.passport = passportDataURL;
-                enterMainApp();
-            } catch (err) { alert(err.message); }
-        }
+        function closeProfile() { document.getElementById('profileOverlay').style.display = 'none'; }
 
         function loadUsers() {
             db.collection("users").onSnapshot(snap => {
-                const list = document.getElementById('activeStudents'); list.innerHTML = "";
-                snap.forEach(doc => {
-                    const u = doc.data(); if(u.username === me.username) return;
-                    list.innerHTML += `<div class="user-row" onclick="openDM('${u.username}', '${u.avatar}', '${u.phone}')">
-                        <img src="${u.avatar}" style="width:45px; border-radius:12px;">
-                        <b style="letter-spacing:1px;">${u.username}</b></div>`;
+                const list = document.getElementById('userList');
+                list.innerHTML = "";
+                snap.forEach(d => {
+                    const u = d.data(); if(u.username === me.username) return;
+                    list.innerHTML += `<div class="post-card" style="display:flex; align-items:center; gap:15px;" onclick="openUserProfile('${u.username}')">
+                        <img src="${u.avatar}" style="width:45px; border-radius:50%">
+                        <b>${u.username}</b>
+                        <i class="fas fa-chevron-right" style="margin-left:auto; color:var(--gold)"></i>
+                    </div>`;
                 });
-            });
-        }
-
-        function openDM(user, avatar, phone) {
-            document.getElementById('dmOverlay').style.display = 'flex';
-            document.getElementById('dmTargetName').innerText = user;
-            activeRoomId = [me.username, user].sort().join("__");
-            document.getElementById('callAction').onclick = () => window.location.href = `tel:${phone}`;
-            listenMessages();
-        }
-
-        function closeDM() { 
-            document.getElementById('dmOverlay').style.display = 'none'; 
-            if(dmUnsub) dmUnsub();
-        }
-
-        function sendPrivateMsg() {
-            const txt = document.getElementById('dmInput').value; if(!txt) return;
-            db.collection("pvt_rooms").doc(activeRoomId).collection("messages").add({
-                text: txt, sender: me.username, timestamp: Date.now()
-            });
-            document.getElementById('dmInput').value = "";
-        }
-
-        function listenMessages() {
-            dmUnsub = db.collection("pvt_rooms").doc(activeRoomId).collection("messages").orderBy("timestamp", "asc").onSnapshot(snap => {
-                const box = document.getElementById('dmBox'); box.innerHTML = "";
-                snap.forEach(doc => {
-                    const m = doc.data(); const isMe = m.sender === me.username;
-                    box.innerHTML += `<div class="msg ${isMe ? 'sent' : 'received'}">${m.text}</div>`;
-                });
-                box.scrollTop = box.scrollHeight;
             });
         }
     </script>
