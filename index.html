@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-    <title>INDEX | Emerald Elite</title>
+    <title> SELLR | Students Buy and Sell </title>
     
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -84,9 +84,9 @@
 
     <div id="pinGate" class="auth-screen">
         <div class="emerald-card">
-            <h1 style="font-family:'Cinzel'; color:var(--wheat)">ELITE NODE</h1>
-            <input type="password" id="pinInput" placeholder="4-DIGIT PIN" style="text-align:center; letter-spacing:8px;">
-            <button class="btn-elite" onclick="checkPin()">UNSEAL ACCESS</button>
+            <h1 style="font-family:'Cinzel'; color:var(--wheat)"> PASSWORD REQUIRED</h1>
+            <input type="password" id="pinInput" placeholder=" PIN HERE" style="text-align:center; letter-spacing:8px;">
+            <button class="btn-elite" onclick="checkPin()"> UNLOCK ACCESS</button>
         </div>
     </div>
 
@@ -99,21 +99,21 @@
             </div>
             <input type="email" id="authEmail" placeholder="GMAIL ADDRESS">
             <input type="password" id="authPass" placeholder="PASSWORD">
-            <button class="btn-elite" id="authBtn" onclick="handleAuth()">ENTER NODE</button>
-            <p onclick="toggleAuth()" id="authToggle" style="margin-top:15px; font-size:0.8rem; color:var(--wheat); cursor:pointer; opacity:0.8;">NEW STUDENT? REGISTER</p>
+            <button class="btn-elite" id="authBtn" onclick="handleAuth()"> ACCESS NODE</button>
+            <p onclick="toggleAuth()" id="authToggle" style="margin-top:15px; font-size:0.8rem; color:var(--wheat); cursor:pointer; opacity:0.8;">NEW STUDENT EHN? REGISTER NOW!</p>
         </div>
     </div>
 
     <div id="mainApp" class="main-app">
         <header class="app-header">
-            <span style="font-family:'Cinzel'; color:var(--wheat); font-size:1.4rem;">INDEX</span>
+            <span style="font-family:'Cinzel'; color:var(--wheat); font-size:1.4rem;"> ALL IN ACADEMIC GROWTH...</span>
             <div id="topAvatar" onclick="switchTab('profile', document.getElementById('p-nav'))"></div>
         </header>
 
         <div id="timelineTab" class="content-area">
             <div class="post" style="border-color: var(--wheat);">
-                <textarea id="postTxt" placeholder="Express your elite status..."></textarea>
-                <button class="btn-elite" style="width:auto; padding:8px 25px;" onclick="addPost()">POST</button>
+                <textarea id="postTxt" placeholder="Post a status here..."></textarea>
+                <button class="btn-elite" style="width:auto; padding:8px 25px;" onclick="addPost()"> OYA UPLOAD M </button>
             </div>
             <div id="feed"></div>
         </div>
@@ -144,9 +144,9 @@
         </div>
 
         <footer class="footer">
-            <div class="nav-link active" onclick="switchTab('timeline', this)"><i class="fas fa-bolt"></i><span>Feed</span></div>
-            <div class="nav-link" onclick="switchTab('market', this)"><i class="fas fa-store"></i><span>Market</span></div>
-            <div class="nav-link" id="p-nav" onclick="switchTab('profile', this)"><i class="fas fa-id-card"></i><span>Identity</span></div>
+            <div class="nav-link active" onclick="switchTab('timeline', this)"><i class="fas fa-bolt"></i><span> Timeline </span></div>
+            <div class="nav-link" onclick="switchTab('market', this)"><i class="fas fa-store"></i><span> SELLR </span></div>
+            <div class="nav-link" id="p-nav" onclick="switchTab('profile', this)"><i class="fas fa-id-card"></i><span> My Profile</span></div>
         </footer>
     </div>
 
@@ -306,3 +306,4 @@
     </script>
 </body>
 </html>
+
