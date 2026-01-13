@@ -3,63 +3,308 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-    <title> SELLR | Students Buy and Sell </title>
+    <title> SELLR | Elite Node </title>
     
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Cinzel:wght@600;800&display=swap');
+        
+        :root { 
+            --deep-green: #064e3b; --wheat: #f5deb3; --white: #ffffff;
+            --bg: #01120b; --glass: rgba(255, 255, 255, 0.05); --border: rgba(245, 222, 179, 0.3); 
+        }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; font-family: 'Poppins', sans-serif; }
+        body { margin: 0; padding: 0; height: 100vh; background: var(--bg); color: var(--white); overflow: hidden; }
+
+        .auth-screen { position: fixed; inset: 0; background: var(--bg); z-index: 5000; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 25px; }
+        .emerald-card { background: #000; border: 1px solid var(--wheat); padding: 30px; border-radius: 25px; width: 100%; max-width: 400px; text-align: center; }
+        
+        input, textarea { width: 100%; padding: 14px; margin-bottom: 12px; border-radius: 12px; border: 1px solid var(--border); background: var(--glass); color: white; outline: none; }
+        .btn-elite { background: var(--wheat); color: var(--deep-green); border: none; padding: 14px; border-radius: 12px; font-weight: 800; cursor: pointer; width: 100%; text-transform: uppercase; }
+
+        .main-app { display: none; height: 100vh; flex-direction: column; }
+        .content-area { flex: 1; overflow-y: auto; padding: 15px 15px 100px; }
+        .hidden { display: none !important; }
+
+        /* Media Handling */
+        .preview-scroll { display: flex; gap: 10px; overflow-x: auto; margin: 10px 0; padding-bottom: 5px; }
+        .preview-box { min-width: 80px; height: 80px; border-radius: 10px; border: 1px solid var(--wheat); object-fit: cover; }
+        .post-img { width: 100%; border-radius: 15px; margin-top: 10px; border: 1px solid var(--border); }
+        audio { width: 100%; height: 35px; margin-top: 10px; }
+
+        /* Listing/Post Cards */
+        .post, .market-card { background: var(--glass); border: 1px solid var(--border); border-radius: 20px; padding: 15px; margin-bottom: 15px; }
+        
+        /* Footer Navigation */
+        .footer { position: fixed; bottom: 0; width: 100%; height: 80px; background: rgba(1, 18, 11, 0.98); border-top: 1px solid var(--border); display: flex; justify-content: space-around; align-items: center; padding-bottom: 15px; }
+        .nav-link { color: rgba(255,255,255,0.4); text-align: center; cursor: pointer; font-size: 0.7rem; }
+        .nav-link.active { color: var(--wheat); }
+        .nav-link i { font-size: 1.2rem; display: block; margin-bottom: 4px; }
+    </style>
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
     <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-auth-compat.js"></script>
     <script src="https://js.paystack.co/v1/inline.js"></script>
+</head>
+<body>
 
-    <style>
-        :root { 
-            --deep-green: #064e3b; 
-            --wheat: #f5deb3;
-            --white: #ffffff;
-            --bg: #01120b; 
-            --glass: rgba(255, 255, 255, 0.05); 
-            --border: rgba(245, 222, 179, 0.3); 
+    <div id="pinGate" class="auth-screen">
+        <div class="emerald-card">
+            <h1 style="font-family:'Cinzel'; color:var(--wheat)">ACCESS PIN</h1>
+            <input type="password" id="pinInput" placeholder="PIN" style="text-align:center; letter-spacing:8px;">
+            <button class="btn-elite" onclick="checkPin()">UNLOCK</button>
+        </div>
+    </div>
+
+    <div id="authGate" class="auth-screen hidden">
+        <div class="emerald-card">
+            <h2 id="authTitle" style="font-family:'Cinzel'; color:var(--wheat)">UPLINK</h2>
+            <div id="regFields" class="hidden">
+                <input type="text" id="regMatric" placeholder="MATRIC NUMBER">
+                <input type="text" id="regUser" placeholder="USERNAME">
+            </div>
+            <input type="email" id="authEmail" placeholder="EMAIL">
+            <input type="password" id="authPass" placeholder="PASSWORD">
+            <button class="btn-elite" onclick="handleAuth()">ENTER NODE</button>
+            <p onclick="toggleAuth()" style="color:var(--wheat); cursor:pointer; font-size:0.8rem; margin-top:10px;">Switch Login/Register</p>
+        </div>
+    </div>
+
+    <div id="mainApp" class="main-app">
+        <header style="padding: 45px 20px 15px; border-bottom: 1px solid var(--border);">
+            <span style="font-family:'Cinzel'; color:var(--wheat);">SELLR NODE</span>
+        </header>
+
+        <div id="timelineTab" class="content-area">
+            <div class="post">
+                <textarea id="postTxt" placeholder="What's the update?"></textarea>
+                <div id="timelinePreview" class="preview-scroll"></div>
+                <div style="display:flex; gap:15px; color:var(--wheat); align-items:center;">
+                    <i class="fas fa-image" onclick="document.getElementById('postImgInput').click()"></i>
+                    <i class="fas fa-music" onclick="document.getElementById('postAudInput').click()"></i>
+                    <button class="btn-elite" style="width:auto; padding:8px 20px; margin-left:auto;" onclick="addPost()">POST</button>
+                </div>
+                <input type="file" id="postImgInput" hidden accept="image/*" onchange="previewMedia('timelinePreview', this)">
+                <input type="file" id="postAudInput" hidden accept="audio/*" onchange="previewMedia('timelinePreview', this, true)">
+            </div>
+            <div id="feed"></div>
+        </div>
+
+        <div id="marketTab" class="content-area hidden">
+            <div class="emerald-card" style="max-width:none; margin-bottom:20px;">
+                <h3 style="color:var(--wheat); font-family:'Cinzel';">SELL SOMETHING</h3>
+                <input type="text" id="itemName" placeholder="Item Name">
+                <input type="number" id="itemPrice" placeholder="Price (NGN)">
+                <div id="marketPreview" class="preview-scroll"></div>
+                <button onclick="document.getElementById('marketImgInput').click()" style="background:transparent; color:var(--wheat); border:1px dashed var(--wheat); padding:10px; width:100%; border-radius:10px; margin-bottom:10px;">+ Add Images (Max 6)</button>
+                <button class="btn-elite" onclick="listItem()">PUBLISH LISTING</button>
+                <input type="file" id="marketImgInput" hidden multiple accept="image/*" onchange="previewMarketImages(this)">
+            </div>
+            <div id="marketList"></div>
+        </div>
+
+        <div id="profileTab" class="content-area hidden">
+            <div class="emerald-card" style="max-width:none; margin-bottom:20px;">
+                <img id="myAvatar" style="width:80px; height:80px; border-radius:50%; border:2px solid var(--wheat);">
+                <h2 id="myName" style="margin:10px 0;">---</h2>
+                <small id="myMatric" style="color:var(--wheat);"></small>
+                <div style="margin-top:20px; display:flex; gap:10px;">
+                    <button onclick="logout()" class="btn-elite" style="background:transparent; border:1px solid var(--wheat); color:white;">Logout</button>
+                    <button onclick="deleteMyAccount()" class="btn-elite" style="background:#450a0a; color:white;">Wipe</button>
+                </div>
+            </div>
+            <h4 style="color:var(--wheat); font-family:'Cinzel';">STUDENT DIRECTORY (CHAT)</h4>
+            <div id="directory"></div>
+        </div>
+
+        <footer class="footer">
+            <div class="nav-link active" onclick="switchTab('timeline', this)"><i class="fas fa-bolt"></i><span>Timeline</span></div>
+            <div class="nav-link" onclick="switchTab('market', this)"><i class="fas fa-store"></i><span>SELLR</span></div>
+            <div class="nav-link" onclick="switchTab('profile', this)"><i class="fas fa-id-card"></i><span>Directory</span></div>
+        </footer>
+    </div>
+
+    <script>
+        // Firebase config here (already provided)
+        const firebaseConfig = { apiKey: "AIzaSyDPG58s4TtDy3QPWcWVmPflG91sE4pvdAE", authDomain: "dgmobilechat.firebaseapp.com", projectId: "dgmobilechat", storageBucket: "dgmobilechat.firebasestorage.app", messagingSenderId: "1026158969514", appId: "1:1026158969514:web:a25655005d2868ec6c46d3" };
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth(), db = firebase.firestore();
+
+        let userData = null;
+        let isLogin = true;
+        let tempMedia = { img: null, aud: null, marketImgs: [] };
+
+        // --- NAVIGATION ---
+        function checkPin() {
+            if(document.getElementById('pinInput').value === "1231") {
+                document.getElementById('pinGate').classList.add('hidden');
+                document.getElementById('authGate').classList.remove('hidden');
+            }
         }
 
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { 
-            margin: 0; padding: 0; height: 100vh; 
-            font-family: 'Plus Jakarta Sans', sans-serif; 
-            background: var(--bg); color: var(--white); overflow: hidden; 
+        function toggleAuth() {
+            isLogin = !isLogin;
+            document.getElementById('authTitle').innerText = isLogin ? "UPLINK" : "REGISTRATION";
+            document.getElementById('regFields').classList.toggle('hidden', isLogin);
         }
 
-        /* Authentication Screens */
-        .auth-screen { position: fixed; inset: 0; background: var(--bg); z-index: 5000; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 25px; }
-        .emerald-card { 
-            background: #000; border: 1px solid var(--wheat); 
-            padding: 30px; border-radius: 25px; width: 100%; max-width: 400px; 
-            box-shadow: 0 10px 40px rgba(6, 78, 59, 0.5); text-align: center; 
+        // --- AUTH & DATA ---
+        async function handleAuth() {
+            const email = document.getElementById('authEmail').value;
+            const pass = document.getElementById('authPass').value;
+            try {
+                if(isLogin) { await auth.signInWithEmailAndPassword(email, pass); } 
+                else {
+                    const user = document.getElementById('regUser').value;
+                    const matric = document.getElementById('regMatric').value;
+                    const cred = await auth.createUserWithEmailAndPassword(email, pass);
+                    userData = { uid: cred.user.uid, username: user, matric: matric, email: email, avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${user}` };
+                    await db.collection("users").doc(cred.user.uid).set(userData);
+                }
+            } catch (e) { alert(e.message); }
         }
 
-        input, textarea { 
-            width: 100%; padding: 14px; margin-bottom: 12px; border-radius: 12px; 
-            border: 1px solid var(--border); background: var(--glass); color: white; outline: none; 
-        }
-        
-        .btn-elite { 
-            background: var(--wheat); color: var(--deep-green); border: none; 
-            padding: 16px; border-radius: 12px; font-weight: 800; cursor: pointer; 
-            width: 100%; text-transform: uppercase; letter-spacing: 1px; transition: 0.3s;
+        auth.onAuthStateChanged(async (user) => {
+            if(user) {
+                const doc = await db.collection("users").doc(user.uid).get();
+                userData = doc.data();
+                document.getElementById('authGate').classList.add('hidden');
+                document.getElementById('mainApp').style.display = 'flex';
+                initApp();
+            }
+        });
+
+        function initApp() {
+            document.getElementById('myName').innerText = userData.username;
+            document.getElementById('myMatric').innerText = userData.matric;
+            document.getElementById('myAvatar').src = userData.avatar;
+            loadTimeline();
+            loadDirectory();
         }
 
-        /* Main Layout */
-        .main-app { display: none; height: 100vh; flex-direction: column; }
-        .app-header { 
-            padding: 50px 20px 15px; display: flex; justify-content: space-between; 
-            align-items: center; border-bottom: 1px solid var(--border); 
-            background: linear-gradient(to bottom, var(--deep-green), transparent);
+        // --- TIMELINE & MEDIA ---
+        function previewMedia(containerId, input, isAudio = false) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const el = isAudio ? document.createElement('i') : document.createElement('img');
+                if(!isAudio) { 
+                    el.src = e.target.result; el.className = 'preview-box'; 
+                    tempMedia.img = e.target.result;
+                } else { 
+                    el.className = 'fas fa-music'; el.style.fontSize = '2rem';
+                    tempMedia.aud = e.target.result;
+                }
+                document.getElementById(containerId).appendChild(el);
+            };
+            reader.readAsDataURL(input.files[0]);
         }
 
-        .content-area { flex: 1; overflow-y: auto; padding: 15px 15px 120px; }
-        .hidden { display: none !important; }
+        async function addPost() {
+            const txt = document.getElementById('postTxt').value;
+            await db.collection("posts").add({
+                username: userData.username, avatar: userData.avatar,
+                text: txt, img: tempMedia.img, aud: tempMedia.aud, timestamp: Date.now()
+            });
+            document.getElementById('postTxt').value = "";
+            document.getElementById('timelinePreview').innerHTML = "";
+            tempMedia = { img: null, aud: null, marketImgs: [] };
+        }
 
+        function loadTimeline() {
+            db.collection("posts").orderBy("timestamp", "desc").onSnapshot(snap => {
+                const feed = document.getElementById('feed'); feed.innerHTML = "";
+                snap.forEach(doc => {
+                    const p = doc.data();
+                    feed.innerHTML += `
+                        <div class="post">
+                            <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
+                                <img src="${p.avatar}" style="width:30px; border-radius:5px;"><b>${p.username}</b>
+                            </div>
+                            <p>${p.text}</p>
+                            ${p.img ? `<img src="${p.img}" class="post-img">` : ''}
+                            ${p.aud ? `<audio controls src="${p.aud}"></audio>` : ''}
+                        </div>`;
+                });
+            });
+        }
+
+        // --- MARKET ---
+        function previewMarketImages(input) {
+            Array.from(input.files).slice(0, 6).forEach(file => {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    tempMedia.marketImgs.push(e.target.result);
+                    const img = document.createElement('img');
+                    img.src = e.target.result; img.className = 'preview-box';
+                    document.getElementById('marketPreview').appendChild(img);
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        async function listItem() {
+            const name = document.getElementById('itemName').value;
+            const price = document.getElementById('itemPrice').value;
+            await db.collection("marketplace").add({
+                sellerId: userData.uid, sellerName: userData.username,
+                itemName: name, price: price, images: tempMedia.marketImgs, status: "available", timestamp: Date.now()
+            });
+            alert("Listed Live!");
+            tempMedia.marketImgs = [];
+            document.getElementById('marketPreview').innerHTML = "";
+        }
+
+        function loadMarket() {
+            db.collection("marketplace").orderBy("timestamp", "desc").onSnapshot(snap => {
+                const mList = document.getElementById('marketList'); mList.innerHTML = "";
+                snap.forEach(doc => {
+                    const item = doc.data();
+                    mList.innerHTML += `
+                        <div class="market-card">
+                            <div class="preview-scroll">${item.images.map(i => `<img src="${i}" class="preview-box">`).join('')}</div>
+                            <div style="display:flex; justify-content:space-between; margin-top:10px;">
+                                <b>${item.itemName}</b><span class="price-tag">₦${item.price}</span>
+                            </div>
+                            <div style="display:flex; gap:5px; margin-top:10px;">
+                                <button class="btn-elite" style="padding:5px;" onclick="payOnline('${doc.id}', ${item.price})">PAY ONLINE</button>
+                                <button class="btn-elite" style="padding:5px; background:transparent; border:1px solid var(--wheat); color:white;" onclick="alert('Chat seller to pick up!')">PICK UP</button>
+                            </div>
+                        </div>`;
+                });
+            });
+        }
+
+        // --- DIRECTORY & CHAT ---
+        function loadDirectory() {
+            db.collection("users").onSnapshot(snap => {
+                const dir = document.getElementById('directory'); dir.innerHTML = "";
+                snap.forEach(doc => {
+                    const u = doc.data(); if(u.uid === userData.uid) return;
+                    dir.innerHTML += `
+                        <div class="post" style="display:flex; align-items:center; gap:15px;" onclick="alert('Opening chat with ${u.username}...')">
+                            <img src="${u.avatar}" style="width:40px; border-radius:50%;">
+                            <div><b>${u.username}</b><br><small>${u.matric}</small></div>
+                            <i class="fas fa-comment-dots" style="margin-left:auto; color:var(--wheat);"></i>
+                        </div>`;
+                });
+            });
+        }
+
+        function switchTab(tab, el) {
+            document.querySelectorAll('.content-area').forEach(t => t.classList.add('hidden'));
+            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+            document.getElementById(tab + 'Tab').classList.remove('hidden');
+            el.classList.add('active');
+            if(tab === 'market') loadMarket();
+        }
+
+        function logout() { auth.signOut(); location.reload(); }
+        async function deleteMyAccount() { if(confirm("Wipe all data?")) { await db.collection("users").doc(userData.uid).delete(); await auth.currentUser.delete(); location.reload(); } }
+    </script>
+</body>
+</html>
         /* Timeline & Market UI */
         .post, .market-card { 
             background: var(--glass); border: 1px solid var(--border); 
@@ -306,4 +551,5 @@
     </script>
 </body>
 </html>
+
 
