@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-    <title> Student Chat Hub | Marketplace </title>
+    <title>INDEX | Emerald Elite</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -11,105 +11,142 @@
     <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-auth-compat.js"></script>
+    <script src="https://js.paystack.co/v1/inline.js"></script>
 
     <style>
         :root { 
-            --gold: #d4af37; 
-            --emerald: #064e3b; /* Deep Green */
-            --emerald-light: #10b981; 
-            --bg: #01120b; /* Very dark green-black */
-            --glass: rgba(255, 255, 255, 0.03); 
-            --border: rgba(212, 175, 55, 0.25); 
+            --deep-green: #064e3b; 
+            --wheat: #f5deb3;
+            --white: #ffffff;
+            --bg: #01120b; 
+            --glass: rgba(255, 255, 255, 0.05); 
+            --border: rgba(245, 222, 179, 0.3); 
         }
+
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { margin: 0; padding: 0; height: 100vh; font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: #f8fafc; overflow: hidden; }
-        
-        /* AUTH GATES */
-        .auth-screen { position: fixed; inset: 0; background: var(--bg); z-index: 5000; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; }
-        .emerald-card { background: #000; border: 1px solid var(--gold); padding: 35px 25px; border-radius: 30px; width: 100%; max-width: 400px; box-shadow: 0 0 40px rgba(6, 78, 59, 0.4); text-align: center; }
-        
-        input { width: 100%; padding: 15px; margin-bottom: 12px; border-radius: 12px; border: 1px solid var(--border); background: rgba(255,255,255,0.05); color: white; outline: none; transition: 0.3s; }
-        input:focus { border-color: var(--emerald-light); box-shadow: 0 0 10px rgba(16, 185, 129, 0.2); }
-        
-        .btn-elite { background: linear-gradient(135deg, #d4af37, #f5d17a); color: #000; border: none; padding: 16px; border-radius: 12px; font-weight: 800; cursor: pointer; width: 100%; text-transform: uppercase; letter-spacing: 1px; }
+        body { 
+            margin: 0; padding: 0; height: 100vh; 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            background: var(--bg); color: var(--white); overflow: hidden; 
+        }
 
-        /* MAIN APP */
-        .main-container { display: none; height: 100vh; flex-direction: column; }
-        .header { padding: 50px 20px 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); background: rgba(6, 78, 59, 0.2); }
-        
-        /* TIMELINE & POSTS */
-        .content-area { flex: 1; overflow-y: auto; padding: 15px; padding-bottom: 100px; }
-        .post { background: var(--glass); border: 1px solid var(--border); border-radius: 20px; padding: 15px; margin-bottom: 20px; }
-        .post-header { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
-        .post-img { width: 100%; border-radius: 15px; border: 1px solid var(--border); margin-top: 10px; }
+        /* Authentication Screens */
+        .auth-screen { position: fixed; inset: 0; background: var(--bg); z-index: 5000; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 25px; }
+        .emerald-card { 
+            background: #000; border: 1px solid var(--wheat); 
+            padding: 30px; border-radius: 25px; width: 100%; max-width: 400px; 
+            box-shadow: 0 10px 40px rgba(6, 78, 59, 0.5); text-align: center; 
+        }
 
-        /* CHAT INTERFACE */
-        .chat-row { display: flex; align-items: center; gap: 15px; padding: 15px; background: rgba(255,255,255,0.02); border-radius: 15px; margin-bottom: 10px; border-left: 4px solid var(--gold); }
+        input, textarea { 
+            width: 100%; padding: 14px; margin-bottom: 12px; border-radius: 12px; 
+            border: 1px solid var(--border); background: var(--glass); color: white; outline: none; 
+        }
         
-        /* FOOTER */
-        .footer { position: fixed; bottom: 0; width: 100%; height: 80px; background: rgba(1, 18, 11, 0.95); border-top: 1px solid var(--border); display: flex; justify-content: space-around; padding-bottom: 20px; align-items: center; }
-        .nav-link { color: #4b5563; display: flex; flex-direction: column; align-items: center; font-size: 0.75rem; text-decoration: none; cursor: pointer; }
-        .nav-link.active { color: var(--gold); }
+        .btn-elite { 
+            background: var(--wheat); color: var(--deep-green); border: none; 
+            padding: 16px; border-radius: 12px; font-weight: 800; cursor: pointer; 
+            width: 100%; text-transform: uppercase; letter-spacing: 1px; transition: 0.3s;
+        }
 
+        /* Main Layout */
+        .main-app { display: none; height: 100vh; flex-direction: column; }
+        .app-header { 
+            padding: 50px 20px 15px; display: flex; justify-content: space-between; 
+            align-items: center; border-bottom: 1px solid var(--border); 
+            background: linear-gradient(to bottom, var(--deep-green), transparent);
+        }
+
+        .content-area { flex: 1; overflow-y: auto; padding: 15px 15px 120px; }
         .hidden { display: none !important; }
+
+        /* Timeline & Market UI */
+        .post, .market-card { 
+            background: var(--glass); border: 1px solid var(--border); 
+            border-radius: 20px; padding: 15px; margin-bottom: 15px; 
+        }
+        .price-tag { color: var(--wheat); font-weight: 700; font-size: 1.1rem; }
+        .status-badge { font-size: 0.7rem; padding: 4px 8px; border-radius: 6px; background: var(--wheat); color: var(--deep-green); }
+
+        /* Footer Navigation */
+        .footer { 
+            position: fixed; bottom: 0; width: 100%; height: 85px; 
+            background: rgba(1, 18, 11, 0.98); border-top: 1px solid var(--border); 
+            display: flex; justify-content: space-around; align-items: center; padding-bottom: 15px;
+        }
+        .nav-link { color: rgba(255,255,255,0.4); text-align: center; cursor: pointer; transition: 0.3s; }
+        .nav-link.active { color: var(--wheat); transform: translateY(-5px); }
+        .nav-link i { font-size: 1.4rem; margin-bottom: 4px; }
+        .nav-link span { display: block; font-size: 0.65rem; text-transform: uppercase; font-weight: 600; }
     </style>
 </head>
 <body>
 
     <div id="pinGate" class="auth-screen">
         <div class="emerald-card">
-            <h1 style="font-family:'Cinzel'; color:var(--gold)">ELITE ACCESS</h1>
-            <input type="password" id="pinInput" placeholder="ENTER NODE PIN" style="text-align:center; letter-spacing: 8px;">
-            <button class="btn-elite" onclick="checkPin()">UNSEAL</button>
+            <h1 style="font-family:'Cinzel'; color:var(--wheat)">ELITE NODE</h1>
+            <input type="password" id="pinInput" placeholder="4-DIGIT PIN" style="text-align:center; letter-spacing:8px;">
+            <button class="btn-elite" onclick="checkPin()">UNSEAL ACCESS</button>
         </div>
     </div>
 
     <div id="authGate" class="auth-screen hidden">
         <div class="emerald-card">
-            <h2 id="authTitle" style="font-family:'Cinzel'; color:var(--gold); margin-bottom: 20px;"> CAMPUS SELLR </h2>
+            <h2 id="authTitle" style="font-family:'Cinzel'; color:var(--wheat)">UPLINK</h2>
             <div id="regFields" class="hidden">
                 <input type="text" id="regMatric" placeholder="MATRIC NUMBER">
-                <input type="text" id="regUser" placeholder="CHOOSE USERNAME">
+                <input type="text" id="regUser" placeholder="USERNAME">
             </div>
             <input type="email" id="authEmail" placeholder="GMAIL ADDRESS">
             <input type="password" id="authPass" placeholder="PASSWORD">
-            <button class="btn-elite" id="authBtn" onclick="handleAuth()"> LOGIN </button>
-            <p onclick="toggleAuth()" id="authToggle" style="margin-top:15px; font-size:0.8rem; color:var(--gold); cursor:pointer;"> New Student huh? Register Now!</p>
+            <button class="btn-elite" id="authBtn" onclick="handleAuth()">ENTER NODE</button>
+            <p onclick="toggleAuth()" id="authToggle" style="margin-top:15px; font-size:0.8rem; color:var(--wheat); cursor:pointer; opacity:0.8;">NEW STUDENT? REGISTER</p>
         </div>
     </div>
 
-    <div id="mainApp" class="main-container">
-        <header class="header">
-            <span style="font-family:'Cinzel'; color:var(--gold); font-size:1.4rem; letter-spacing: 2px;"> DG Chat </span>
-            <div id="myBadge" onclick="showProfile()"></div>
+    <div id="mainApp" class="main-app">
+        <header class="app-header">
+            <span style="font-family:'Cinzel'; color:var(--wheat); font-size:1.4rem;">INDEX</span>
+            <div id="topAvatar" onclick="switchTab('profile', document.getElementById('p-nav'))"></div>
         </header>
 
         <div id="timelineTab" class="content-area">
-            <div class="emerald-card" style="max-width: none; margin-bottom: 20px; padding: 15px;">
-                <textarea id="postTxt" placeholder="Post to the timeline..." style="width:100%; background:transparent; border:none; color:white; outline:none; height:60px;"></textarea>
-                <button class="btn-elite" style="width:auto; padding:8px 20px; margin-top:10px;" onclick="addPost()">POST</button>
+            <div class="post" style="border-color: var(--wheat);">
+                <textarea id="postTxt" placeholder="Express your elite status..."></textarea>
+                <button class="btn-elite" style="width:auto; padding:8px 25px;" onclick="addPost()">POST</button>
             </div>
             <div id="feed"></div>
         </div>
 
-        <div id="chatTab" class="content-area hidden">
-            <h3 style="color:var(--gold); font-family:'Cinzel'; margin-bottom: 15px;"> CHATS</h3>
-            <div id="userList"></div>
+        <div id="marketTab" class="content-area hidden">
+            <div class="emerald-card" style="max-width:none; margin-bottom:20px;">
+                <h3 style="color:var(--wheat); font-family:'Cinzel';">LIST ITEM</h3>
+                <input type="text" id="itemName" placeholder="What are you selling?">
+                <input type="number" id="itemPrice" placeholder="Price (NGN)">
+                <button class="btn-elite" onclick="listItem()">PUBLISH TO MARKET</button>
+            </div>
+            <div id="marketList"></div>
         </div>
 
         <div id="profileTab" class="content-area hidden">
-            <div class="emerald-card" style="max-width: none;">
-                <img id="myLargeAvatar" style="width:100px; height:100px; border-radius:30px; border:2px solid var(--gold);">
-                <h2 id="myName" style="margin-top:10px;">Username</h2>
-                <p id="myMatric" style="color:var(--gold); opacity:0.8;">Matric: </p>
-                <button class="btn-elite" style="margin-top:20px; background:transparent; border:1px solid red; color:red;" onclick="logout()">DISCONNECT</button>
+            <div class="emerald-card" style="max-width:none; margin-top:20px;">
+                <img id="myAvatar" style="width:100px; height:100px; border-radius:25px; border:2px solid var(--wheat);">
+                <h2 id="myName" style="margin-top:15px; color:var(--wheat);">Username</h2>
+                <p id="myMatric" style="opacity:0.7;"></p>
+                <p id="myEmail" style="font-size:0.8rem; opacity:0.5;"></p>
+                
+                <div style="margin-top:40px; border-top: 1px solid rgba(255,0,0,0.2); padding-top:20px;">
+                    <button onclick="logout()" style="background:transparent; color:white; border:none; cursor:pointer;">Logout</button>
+                    <br><br>
+                    <button onclick="deleteMyAccount()" style="background:transparent; color:#ff4444; border:1px solid #ff4444; padding:10px; border-radius:8px; font-size:0.7rem;">DELETE ACCOUNT (WIPE DATA)</button>
+                </div>
             </div>
         </div>
 
         <footer class="footer">
-            <div class="nav-link active" onclick="switchTab('timeline', this)"><i class="fas fa-crown"></i><span>Members</span></div>
-            <div class="nav-link" onclick="switchTab('chat', this)"><i class="fas fa-comment-dots"></i><span>Chat</span></div>
-            <div class="nav-link" onclick="switchTab('profile', this)"><i class="fas fa-user-shield"></i><span>Identity</span></div>
+            <div class="nav-link active" onclick="switchTab('timeline', this)"><i class="fas fa-bolt"></i><span>Feed</span></div>
+            <div class="nav-link" onclick="switchTab('market', this)"><i class="fas fa-store"></i><span>Market</span></div>
+            <div class="nav-link" id="p-nav" onclick="switchTab('profile', this)"><i class="fas fa-id-card"></i><span>Identity</span></div>
         </footer>
     </div>
 
@@ -128,41 +165,32 @@
         let userData = null;
         let isLogin = true;
 
-        // --- AUTH FLOW ---
+        // --- AUTH LOGIC ---
         function checkPin() {
             if(document.getElementById('pinInput').value === "1231") {
                 document.getElementById('pinGate').classList.add('hidden');
                 document.getElementById('authGate').classList.remove('hidden');
-            } else { alert("ACCESS DENIED"); }
+            } else { alert("INVALID NODE PIN"); }
         }
 
         function toggleAuth() {
             isLogin = !isLogin;
-            document.getElementById('authTitle').innerText = isLogin ? "CAMPUS UPLINK" : "ELITE REGISTRATION";
+            document.getElementById('authTitle').innerText = isLogin ? "UPLINK" : "REGISTRATION";
             document.getElementById('regFields').classList.toggle('hidden', isLogin);
-            document.getElementById('authBtn').innerText = isLogin ? "LOGIN" : "REGISTER";
+            document.getElementById('authBtn').innerText = isLogin ? "ENTER NODE" : "CREATE IDENTITY";
         }
 
         async function handleAuth() {
             const email = document.getElementById('authEmail').value;
             const pass = document.getElementById('authPass').value;
-            
             try {
-                if(isLogin) {
-                    await auth.signInWithEmailAndPassword(email, pass);
-                } else {
+                if(isLogin) { await auth.signInWithEmailAndPassword(email, pass); } 
+                else {
                     const user = document.getElementById('regUser').value;
                     const matric = document.getElementById('regMatric').value;
-                    if(!user || !matric) return alert("Fill all fields");
-                    
+                    if(!user || !matric) return alert("All fields required");
                     const cred = await auth.createUserWithEmailAndPassword(email, pass);
-                    const profile = {
-                        uid: cred.user.uid,
-                        username: user,
-                        matric: matric,
-                        email: email,
-                        avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${user}`
-                    };
+                    const profile = { uid: cred.user.uid, username: user, matric: matric, email: email, avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${user}` };
                     await db.collection("users").doc(cred.user.uid).set(profile);
                 }
             } catch (e) { alert(e.message); }
@@ -177,18 +205,17 @@
                 initApp();
             } else {
                 document.getElementById('mainApp').style.display = 'none';
-                document.getElementById('authGate').classList.remove('hidden');
             }
         });
 
-        // --- APP LOGIC ---
+        // --- APP ENGINE ---
         function initApp() {
-            document.getElementById('myBadge').innerHTML = `<img src="${userData.avatar}" style="width:35px; border-radius:8px; border:1px solid var(--gold);">`;
+            document.getElementById('topAvatar').innerHTML = `<img src="${userData.avatar}" style="width:35px; border-radius:8px; border:1px solid var(--wheat);">`;
             document.getElementById('myName').innerText = userData.username;
-            document.getElementById('myMatric').innerText = "Matric: " + userData.matric;
-            document.getElementById('myLargeAvatar').src = userData.avatar;
+            document.getElementById('myMatric').innerText = "MATRIC: " + userData.matric;
+            document.getElementById('myEmail').innerText = userData.email;
+            document.getElementById('myAvatar').src = userData.avatar;
             loadTimeline();
-            loadUserList();
         }
 
         function switchTab(tab, el) {
@@ -196,56 +223,83 @@
             document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
             document.getElementById(tab + 'Tab').classList.remove('hidden');
             el.classList.add('active');
+            if(tab === 'market') loadMarket();
         }
 
         async function addPost() {
             const txt = document.getElementById('postTxt').value;
             if(!txt) return;
-            await db.collection("posts").add({
-                username: userData.username,
-                avatar: userData.avatar,
-                text: txt,
-                timestamp: Date.now()
-            });
+            await db.collection("posts").add({ username: userData.username, avatar: userData.avatar, text: txt, timestamp: Date.now() });
             document.getElementById('postTxt').value = "";
         }
 
         function loadTimeline() {
             db.collection("posts").orderBy("timestamp", "desc").onSnapshot(snap => {
-                const feed = document.getElementById('feed');
-                feed.innerHTML = "";
+                const feed = document.getElementById('feed'); feed.innerHTML = "";
                 snap.forEach(doc => {
                     const p = doc.data();
-                    feed.innerHTML += `
-                        <div class="post">
-                            <div class="post-header">
-                                <img src="${p.avatar}" style="width:30px; border-radius:50%">
-                                <b>${p.username}</b>
-                            </div>
-                            <p>${p.text}</p>
-                        </div>`;
+                    feed.innerHTML += `<div class="post"><div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
+                        <img src="${p.avatar}" style="width:30px; border-radius:5px;"><b>${p.username}</b></div><p>${p.text}</p></div>`;
                 });
             });
         }
 
-        function loadUserList() {
-            db.collection("users").onSnapshot(snap => {
-                const list = document.getElementById('userList');
-                list.innerHTML = "";
+        // --- MARKET & ESCROW ---
+        async function listItem() {
+            const name = document.getElementById('itemName').value;
+            const price = document.getElementById('itemPrice').value;
+            if(!name || !price) return;
+            await db.collection("marketplace").add({ 
+                sellerId: userData.uid, sellerName: userData.username, 
+                itemName: name, price: price, status: "available", timestamp: Date.now() 
+            });
+            alert("Listed Successfully");
+        }
+
+        function loadMarket() {
+            db.collection("marketplace").orderBy("timestamp", "desc").onSnapshot(snap => {
+                const mList = document.getElementById('marketList'); mList.innerHTML = "";
                 snap.forEach(doc => {
-                    const u = doc.data();
-                    if(u.uid === userData.uid) return;
-                    list.innerHTML += `
-                        <div class="chat-row">
-                            <img src="${u.avatar}" style="width:40px; border-radius:10px;">
-                            <div style="flex:1">
-                                <b>${u.username}</b><br>
-                                <small style="opacity:0.6">${u.matric}</small>
-                            </div>
-                            <i class="fas fa-paper-plane" style="color:var(--gold)"></i>
-                        </div>`;
+                    const item = doc.data();
+                    const isBuyer = item.buyerId === userData.uid;
+                    mList.innerHTML += `<div class="market-card">
+                        <div style="display:flex; justify-content:space-between;"><b>${item.itemName}</b><span class="price-tag">₦${item.price}</span></div>
+                        <p style="font-size:0.7rem; opacity:0.6;">By: ${item.sellerName}</p>
+                        ${item.status === 'available' ? `<button class="btn-elite" style="padding:5px; height:auto;" onclick="payItem('${doc.id}', ${item.price})">SECURE ITEM</button>` : ''}
+                        ${item.status === 'escrow' && isBuyer ? `<button class="btn-elite" style="background:#fff;" onclick="releaseFunds('${doc.id}')">CONFIRM RECEIPT</button>` : ''}
+                        ${item.status === 'escrow' && !isBuyer ? `<span class="status-badge">In Escrow</span>` : ''}
+                        ${item.status === 'completed' ? `<span class="status-badge">Deal Finalized</span>` : ''}
+                    </div>`;
                 });
             });
+        }
+
+        function payItem(id, amt) {
+            let handler = PaystackPop.setup({
+                key: 'pk_test_YOUR_KEY', // Replace with your Public Key
+                email: userData.email,
+                amount: amt * 100,
+                callback: function(res) {
+                    db.collection("marketplace").doc(id).update({ status: "escrow", buyerId: userData.uid });
+                    alert("Payment Secured in Escrow!");
+                }
+            });
+            handler.openIframe();
+        }
+
+        async function releaseFunds(id) {
+            if(confirm("Confirm delivery to release funds to seller?")) {
+                await db.collection("marketplace").doc(id).update({ status: "completed" });
+            }
+        }
+
+        // --- ACCOUNT DELETION ---
+        async function deleteMyAccount() {
+            if(confirm("THIS WILL WIPE YOUR DATA AND LET YOU RE-REGISTER. CONTINUE?")) {
+                const user = auth.currentUser;
+                await db.collection("users").doc(user.uid).delete();
+                await user.delete().then(() => { location.reload(); });
+            }
         }
 
         function logout() { auth.signOut(); location.reload(); }
