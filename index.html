@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Equity Hub | White Gold Edition</title>
+    <title>Equity Hub | Secure Edition</title>
     
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
@@ -14,169 +14,120 @@
         :root {
             --deep-gold: #996515;
             --bright-gold: #D4AF37;
-            --white-glass: rgba(255, 255, 255, 0.85);
-            --glass-border: rgba(153, 101, 21, 0.2);
-            --bg-gradient: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
-            --text-dark: #1a1a1a;
+            --white-glass: rgba(255, 255, 255, 0.9);
+            --glass-border: rgba(153, 101, 21, 0.15);
+            --bg-color: #f8f9fa;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
-
-        body { 
-            background: var(--bg-gradient); 
-            color: var(--text-dark);
-            min-height: 100vh;
-            padding-bottom: 100px;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { background-color: var(--bg-color); min-height: 100vh; padding-bottom: 90px; }
         .hidden { display: none !important; }
         .app-container { max-width: 480px; margin: 0 auto; padding: 20px; }
 
-        /* White Glass Cards */
         .glass-card {
             background: var(--white-glass);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
+            backdrop-filter: blur(20px);
             border: 1px solid var(--glass-border);
-            border-radius: 28px;
-            padding: 22px;
+            border-radius: 30px;
+            padding: 20px;
             margin-bottom: 20px;
-            box-shadow: 0 8px 32px rgba(153, 101, 21, 0.08);
         }
 
         .btn-gold {
             background: linear-gradient(135deg, var(--deep-gold), var(--bright-gold));
-            color: white;
-            padding: 16px;
-            border-radius: 18px;
-            border: none;
-            font-weight: 700;
-            width: 100%;
-            cursor: pointer;
-            box-shadow: 0 4px 15px rgba(153, 101, 21, 0.3);
+            color: white; border: none; padding: 16px; border-radius: 20px;
+            font-weight: 800; width: 100%; cursor: pointer;
         }
 
         .glass-input {
-            width: 100%;
-            background: rgba(255, 255, 255, 0.5);
+            width: 100%; background: white; border: 1px solid var(--glass-border);
+            border-radius: 15px; padding: 15px; margin-bottom: 12px; outline: none;
+        }
+
+        .poll-option {
+            background: rgba(153, 101, 21, 0.05);
             border: 1px solid var(--glass-border);
-            border-radius: 14px;
-            padding: 15px;
-            margin-bottom: 12px;
-            outline: none;
+            padding: 12px; border-radius: 12px; margin-top: 8px;
+            display: flex; justify-content: space-between; cursor: pointer;
         }
 
-        /* Broadcast Styling */
-        .broadcast-alert {
-            background: var(--deep-gold);
-            color: white;
-            padding: 15px;
-            border-radius: 20px;
-            margin-bottom: 20px;
-            display: flex;
-            gap: 12px;
-            align-items: center;
-        }
-
-        /* Navigation */
         .bottom-nav {
-            position: fixed; bottom: 0; left: 0; right: 0;
-            background: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(10px);
-            border-top: 1px solid var(--glass-border);
-            display: flex; justify-content: space-around;
-            padding: 15px 0 30px; z-index: 1000;
+            position: fixed; bottom: 0; left: 0; right: 0; height: 85px;
+            background: rgba(255, 255, 255, 0.8); border-top: 1px solid var(--glass-border);
+            display: flex; justify-content: space-around; align-items: center; padding-bottom: 20px;
         }
 
-        .nav-item { color: #888; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+        .nav-item { color: #aaa; cursor: pointer; }
         .nav-item.active { color: var(--deep-gold); }
-
-        .post-img { width: 100%; border-radius: 18px; margin-top: 12px; border: 1px solid #eee; }
     </style>
 </head>
 <body>
 
 <div class="app-container">
-    <section id="auth-screen" style="padding-top: 60px;">
+    <section id="auth-screen" style="padding-top: 80px;">
         <div class="glass-card" style="text-align: center;">
-            <h1 style="color: var(--deep-gold); letter-spacing: -1px; font-weight: 800;">EQUITY HUB</h1>
-            <p style="font-size: 0.8rem; opacity: 0.6; margin-bottom: 40px;">Class of 2026 Portal</p>
+            <h1 style="font-weight: 900; color: var(--deep-gold);">EQUITY HUB</h1>
+            <p style="font-size: 0.7rem; opacity: 0.5; margin-bottom: 30px;">SECURE CLASS PORTAL</p>
             
             <div id="auth-ui">
-                <button class="btn-gold" onclick="showForm()">Student Login</button>
-                <button onclick="gate()" style="background:transparent; border:none; color:var(--deep-gold); margin-top:20px; font-weight:700; cursor:pointer;">Executive Gate</button>
+                <button class="btn-gold" onclick="showForm()">Register / Login</button>
+                <button onclick="gate()" style="background:transparent; border:none; color:var(--deep-gold); margin-top:20px; font-weight:700;">Executive Portal</button>
             </div>
 
             <div id="reg-form" class="hidden">
                 <input type="text" id="reg-name" class="glass-input" placeholder="Full Name">
-                <input type="text" id="reg-matric" class="glass-input" placeholder="Matric Number">
+                <input type="text" id="reg-matric" class="glass-input" placeholder="Matric No (2026/xxx)">
+                <input type="email" id="reg-email" class="glass-input" placeholder="Email Address">
                 <button class="btn-gold" onclick="handleAuth()">Enter Hub</button>
             </div>
         </div>
     </section>
 
     <main id="main-app" class="hidden">
-        <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
-            <h2 style="font-weight: 800; color: var(--deep-gold);">HUB</h2>
-            <div style="display: flex; align-items: center; gap: 10px;">
-                <button id="exec-tool-btn" class="hidden" onclick="sendBroadcast()" style="background:var(--deep-gold); color:white; border:none; padding:5px 10px; border-radius:8px; font-size:0.7rem;">+ BROADCAST</button>
-                <img id="u-pfp-top" src="" style="width: 40px; height: 40px; border-radius: 50%; border: 2px solid var(--deep-gold);">
-            </div>
+        <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h2 id="view-title">Feed</h2>
+            <img id="u-pfp-top" src="" style="width: 40px; height: 40px; border-radius: 12px;">
         </header>
 
-        <div id="broadcast-area"></div>
+        <div id="poll-display"></div>
 
         <section id="tab-feed">
-            <div class="glass-card">
-                <textarea id="post-text" class="glass-input" placeholder="Post an update..." style="height: 80px;"></textarea>
-                <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <input type="file" id="post-file" class="hidden" onchange="handleFile(this)">
-                    <i data-lucide="image" onclick="document.getElementById('post-file').click()" style="color:var(--deep-gold);"></i>
-                    <button class="btn-gold" style="width: auto; padding: 10px 25px;" onclick="publishPost()">Post</button>
-                </div>
-            </div>
             <div id="feed-display"></div>
         </section>
 
-        <section id="tab-market" class="hidden">
-            <div class="glass-card" style="border: 2px dashed var(--deep-gold);">
-                <input type="text" id="m-name" class="glass-input" placeholder="Item Name">
-                <input type="number" id="m-price" class="glass-input" placeholder="Price (₦)">
-                <button class="btn-gold" onclick="listMarket()">Post Item</button>
-            </div>
-            <div id="market-display" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;"></div>
-        </section>
-
         <section id="tab-profile" class="hidden">
-            <div class="glass-card" style="background: var(--deep-gold); color: white;">
-                <div style="display: flex; gap: 15px; align-items: center;">
-                    <img id="p-img" src="" style="width: 70px; height: 70px; border-radius: 15px; background: white;">
-                    <div>
-                        <h3 id="p-name">---</h3>
-                        <p id="p-role" style="font-size: 0.7rem; opacity: 0.8;">Student</p>
-                    </div>
-                </div>
+            <div class="glass-card" style="text-align: center;">
+                <img id="p-img" src="" style="width: 80px; border-radius: 20px;">
+                <h3 id="p-name">---</h3>
+                <p id="p-role" style="color:var(--deep-gold); font-weight:700;"></p>
             </div>
-            <button class="btn-gold" style="background: #ff4757;" onclick="logout()">Sign Out</button>
+
+            <div id="exec-tools" class="glass-card hidden">
+                <p style="font-weight:800; color:var(--deep-gold); margin-bottom:15px;">CREATE POLL</p>
+                <input type="text" id="poll-q" class="glass-input" placeholder="Question">
+                <input type="text" id="poll-o1" class="glass-input" placeholder="Option 1">
+                <input type="text" id="poll-o2" class="glass-input" placeholder="Option 2">
+                <button class="btn-gold" onclick="createPoll()">Launch Poll</button>
+            </div>
+
+            <button class="btn-gold" style="background:#ff4757; margin-top:10px;" onclick="logout()">Logout</button>
         </section>
     </main>
 
     <nav class="bottom-nav hidden" id="main-nav">
-        <div class="nav-item active" onclick="switchTab('feed')"><i data-lucide="layout"></i></div>
-        <div class="nav-item" onclick="switchTab('market')"><i data-lucide="shopping-bag"></i></div>
+        <div class="nav-item active" onclick="switchTab('feed')"><i data-lucide="home"></i></div>
         <div class="nav-item" onclick="switchTab('profile')"><i data-lucide="user"></i></div>
     </nav>
 </div>
 
 <script>
-    // FIREBASE CONFIG - PASTE YOURS HERE
     const firebaseConfig = {
-        apiKey: "YOUR_API_KEY",
-        authDomain: "YOUR_PROJECT.firebaseapp.com",
-        projectId: "YOUR_PROJECT",
-        storageBucket: "YOUR_PROJECT.appspot.com",
-        messagingSenderId: "ID",
-        appId: "APP_ID"
+        apiKey: "AIzaSyBLrdBzHOhsJW4_ixghTx96XpHT4QMS8s8",
+        authDomain: "executo-4ecd7.firebaseapp.com",
+        projectId: "executo-4ecd7",
+        storageBucket: "executo-4ecd7.firebasestorage.app",
+        messagingSenderId: "738758706005",
+        appId: "1:738758706005:web:383f547ce4ddb8b243e5dc"
     };
 
     firebase.initializeApp(firebaseConfig);
@@ -196,18 +147,14 @@
         { name: "Executive 11", role: "Provost", key: "PRV26-PRV" }
     ];
 
-    let user = JSON.parse(localStorage.getItem('ec26_user_white'));
-    let postImg = "";
+    let user = JSON.parse(localStorage.getItem('equity_v2'));
 
-    window.onload = () => {
-        if(user) showMainApp();
-        lucide.createIcons();
-    };
+    window.onload = () => { if(user) showMainApp(); lucide.createIcons(); };
 
     function gate() {
-        const key = prompt("Enter Executive Key:");
-        const found = EXECS.find(e => e.key === key);
-        if(found) loginProcess(found.name, "EXEC-" + found.key, found.role);
+        const k = prompt("Exec Key:");
+        const f = EXECS.find(e => e.key === k);
+        if(f) loginProcess(f.name, "EXEC-"+f.key, "no-email@exec.com", f.role);
     }
 
     function showForm() {
@@ -215,19 +162,36 @@
         document.getElementById('reg-form').classList.remove('hidden');
     }
 
-    function handleAuth() {
-        const n = document.getElementById('reg-name').value;
-        const m = document.getElementById('reg-matric').value;
-        if(n && m) loginProcess(n, m, "Student");
+    // UNIQUE REGISTRATION VALIDATION
+    async function handleAuth() {
+        const name = document.getElementById('reg-name').value.trim();
+        const matric = document.getElementById('reg-matric').value.trim();
+        const email = document.getElementById('reg-email').value.trim();
+
+        if(!name || !matric || !email) return alert("Fill all fields");
+
+        // Check if Matric or Email exists
+        const checkMatric = await db.collection("users").where("matric", "==", matric).get();
+        const checkEmail = await db.collection("users").where("email", "==", email).get();
+
+        if(!checkMatric.empty || !checkEmail.empty) {
+            // Check if it's the SAME person logging back in
+            const existingUser = checkMatric.docs[0]?.data() || checkEmail.docs[0]?.data();
+            if(existingUser.name !== name) {
+                return alert("This Matric Number or Email is already registered to another name.");
+            }
+            // If it's the same person, allow them in (Login)
+            loginProcess(existingUser.name, existingUser.matric, existingUser.email, existingUser.role);
+        } else {
+            // New Registration
+            loginProcess(name, matric, email, "Student");
+        }
     }
 
-    async function loginProcess(name, matric, role) {
-        user = { 
-            id: matric.replace(/\//g, '_'), name, role, 
-            pic: `https://api.dicebear.com/7.x/avataaars/svg?seed=${name}` 
-        };
-        localStorage.setItem('ec26_user_white', JSON.stringify(user));
-        await db.collection("users").doc(user.id).set(user);
+    async function loginProcess(name, matric, email, role) {
+        user = { id: matric.replace(/\//g, '_'), name, matric, email, role, pic: `https://api.dicebear.com/7.x/avataaars/svg?seed=${name}` };
+        localStorage.setItem('equity_v2', JSON.stringify(user));
+        await db.collection("users").doc(user.id).set(user, {merge: true});
         showMainApp();
     }
 
@@ -236,49 +200,56 @@
         document.getElementById('main-app').classList.remove('hidden');
         document.getElementById('main-nav').classList.remove('hidden');
         document.getElementById('u-pfp-top').src = user.pic;
-        if(user.role !== "Student") document.getElementById('exec-tool-btn').classList.remove('hidden');
+        if(user.role !== "Student") document.getElementById('exec-tools').classList.remove('hidden');
         
         loadFeed();
-        loadMarket();
-        listenBroadcast();
+        loadPolls();
     }
 
-    async function sendBroadcast() {
-        const msg = prompt("Official Broadcast Message:");
-        if(msg) await db.collection("broadcasts").doc("latest").set({
-            msg, sender: user.name, time: firebase.firestore.FieldValue.serverTimestamp()
+    // POLL SYSTEM
+    async function createPoll() {
+        const q = document.getElementById('poll-q').value;
+        const o1 = document.getElementById('poll-o1').value;
+        const o2 = document.getElementById('poll-o2').value;
+        if(!q || !o1 || !o2) return;
+
+        await db.collection("polls").add({
+            q, options: [o1, o2], votes: {}, active: true, 
+            time: firebase.firestore.FieldValue.serverTimestamp()
         });
+        alert("Poll Live!");
     }
 
-    function listenBroadcast() {
-        db.collection("broadcasts").doc("latest").onSnapshot(doc => {
-            if(doc.exists) {
-                document.getElementById('broadcast-area').innerHTML = `
-                <div class="broadcast-alert">
-                    <i data-lucide="megaphone"></i>
-                    <div>
-                        <p style="font-weight:700; font-size:0.8rem;">${doc.data().msg}</p>
-                        <small style="opacity:0.8;">- ${doc.data().sender}</small>
+    function loadPolls() {
+        db.collection("polls").where("active", "==", true).onSnapshot(snap => {
+            const cont = document.getElementById('poll-display');
+            cont.innerHTML = "";
+            snap.forEach(doc => {
+                const d = doc.data();
+                const total = Object.keys(d.votes || {}).length;
+                cont.innerHTML += `
+                    <div class="glass-card">
+                        <p style="font-weight:800; font-size:0.9rem;">📊 ${d.q}</p>
+                        ${d.options.map((opt, i) => `
+                            <div class="poll-option" onclick="vote('${doc.id}', ${i})">
+                                <span>${opt}</span>
+                                <b>${Object.values(d.votes || {}).filter(v => v === i).length}</b>
+                            </div>
+                        `).join('')}
+                        <small style="opacity:0.5; display:block; margin-top:10px;">Total Votes: ${total}</small>
                     </div>
-                </div>`;
-                lucide.createIcons();
-            }
+                `;
+            });
         });
     }
 
-    async function publishPost() {
-        const txt = document.getElementById('post-text').value;
-        await db.collection("posts").add({
-            name: user.name, role: user.role, pic: user.pic,
-            txt, img: postImg, time: firebase.firestore.FieldValue.serverTimestamp()
-        });
-        document.getElementById('post-text').value = "";
-    }
-
-    function handleFile(input) {
-        const reader = new FileReader();
-        reader.onload = e => postImg = e.target.result;
-        reader.readAsDataURL(input.files[0]);
+    async function vote(id, idx) {
+        const ref = db.collection("polls").doc(id);
+        const poll = (await ref.get()).data();
+        if(poll.votes[user.id] !== undefined) return alert("Already voted!");
+        
+        const update = {}; update[`votes.${user.id}`] = idx;
+        await ref.update(update);
     }
 
     function loadFeed() {
@@ -288,22 +259,17 @@
             snap.forEach(doc => {
                 const d = doc.data();
                 cont.innerHTML += `
-                <div class="glass-card">
-                    <div style="display:flex; gap:10px; align-items:center; margin-bottom:12px;">
-                        <img src="${d.pic}" style="width:30px; border-radius:50%;">
-                        <div>
-                            <h4 style="font-size:0.75rem;">${d.name}</h4>
-                            <small style="color:var(--deep-gold); font-size:0.6rem;">${d.role}</small>
+                    <div class="glass-card">
+                        <div style="display:flex; gap:10px; align-items:center; margin-bottom:10px;">
+                            <img src="${d.pic}" style="width:30px; border-radius:50%;">
+                            <h4 style="font-size:0.8rem;">${d.name} <span style="color:var(--deep-gold)">(${d.role})</span></h4>
                         </div>
-                    </div>
-                    <p style="font-size:0.85rem;">${d.txt}</p>
-                    ${d.img ? `<img src="${d.img}" class="post-img">` : ''}
-                </div>`;
+                        <p>${d.txt}</p>
+                    </div>`;
             });
         });
     }
 
-    // Market and switchTab logic remains standard
     function switchTab(tab) {
         document.querySelectorAll('main section').forEach(s => s.classList.add('hidden'));
         document.getElementById('tab-'+tab).classList.remove('hidden');
@@ -316,5 +282,6 @@
 
     function logout() { localStorage.clear(); location.reload(); }
 </script>
+
 </body>
 </html>
